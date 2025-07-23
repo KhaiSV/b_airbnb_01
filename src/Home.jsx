@@ -1,52 +1,122 @@
-import React from 'react';
-import './Home.css';
-// import Banner from './Banner'
-import Card from './Card'
+import React from "react";
+import "./Home.css";
+import Section from "./components/Section";
+import Footer from "./Footer";
+import Card from "./Card";
 
 function Home() {
-    return (
-        <div className='home'>
-            {/* <Banner /> */}
+  const dalatCards = [
+    {
+      src: "https://media.nomadicmatt.com/2019/airbnb_breakup3.jpg",
+      title: "Phòng tại Dalat",
+      description: "₫604.824 cho 2 đêm • ★ 5.0",
+      label: "Được khách yêu thích",
+    },
+    {
+      src: "https://media.nomadicmatt.com/2019/airbnb_breakup3.jpg",
+      title: "Nhà tại Dalat",
+      description: "₫933.652 cho 2 đêm • ★ 4.83",
+    },
+    {
+      src: "https://media.nomadicmatt.com/2019/airbnb_breakup3.jpg",
+      title: "Căn hộ tại Dalat",
+      description: "₫3.195.296 cho 2 đêm • ★ 4.88",
+    },
+    {
+      src: "https://media.nomadicmatt.com/2019/airbnb_breakup3.jpg",
+      title: "Trọ tại Dalat",
+      description: "₫902.382 cho 2 đêm • ★ 4.88",
+    },
+    {
+      src: "https://media.nomadicmatt.com/2019/airbnb_breakup3.jpg",
+      title: "Trọ tại Dalat",
+      description: "₫902.382 cho 2 đêm • ★ 4.88",
+    },
+    {
+      src: "https://media.nomadicmatt.com/2019/airbnb_breakup3.jpg",
+      title: "Trọ tại Dalat",
+      description: "₫902.382 cho 2 đêm • ★ 4.88",
+    },
+  ];
 
-            <div className='home__section'>
-            <Card
-                src="https://a0.muscache.com/im/pictures/eb9c7c6a-ee33-414a-b1ba-14e8860d59b3.jpg?im_w=720"
-                title="Online Experiences"
-                description="Unique activities we can do together, led by a world of hosts."
-            />
-            <Card
-                src="https://a0.muscache.com/im/pictures/15159c9c-9cf1-400e-b809-4e13f286fa38.jpg?im_w=720"
-                title="Unique stays"
-                description="Spaces that are more than just a place to sleep."
-            />
-            <Card
-                src="https://a0.muscache.com/im/pictures/fdb46962-10c1-45fc-a228-d0b055411448.jpg?im_w=720"
-                title="Entire homes"
-                description="Comfortable private places, with room for friends or family."
-            />
-            </div>
-            <div className='home__section'>
-            <Card
-                src="https://media.nomadicmatt.com/2019/airbnb_breakup3.jpg"
-                title="3 Bedroom Flat in Bournemouth"
-                description="Superhost with a stunning view of the beachside in Sunny Bournemouth"
-                price="£130/night"
-            />
-            <Card
-                src="https://thespaces.com/wp-content/uploads/2017/08/Courtesy-of-Airbnb.jpg"
-                title="Penthouse in London"
-                description="Enjoy the amazing sights of London with this stunning penthouse"
-                price="£350/night"
-            />
-            <Card
-                src="https://media.nomadicmatt.com/2018/apartment.jpg"
-                title="1 Bedroom apartment"
-                description="Superhost with great amenities and a fabolous shopping complex nearby"
-                price="£70/night"
-            />
-            </div>
-        </div>
-    )
+  const hanoiCards = [
+    {
+      src: "https://media.nomadicmatt.com/2019/airbnb_breakup3.jpg",
+      title: "Nơi ở tại Hoàn Kiếm",
+      description: "₫639.059 cho 2 đêm • ★ 4.82",
+      label: "Được khách yêu thích",
+    },
+    {
+      src: "https://media.nomadicmatt.com/2019/airbnb_breakup3.jpg",
+      title: "Căn hộ tại Ba Đình",
+      description: "₫1.169.200 cho 2 đêm • ★ 4.77",
+    },
+    {
+      src: "https://media.nomadicmatt.com/2019/airbnb_breakup3.jpg",
+      title: "Căn hộ tại Hoàn Kiếm",
+      description: "₫944.090 cho 2 đêm • ★ 4.92",
+    },
+    {
+      src: "https://media.nomadicmatt.com/2019/airbnb_breakup3.jpg",
+      title: "Khách sạn tại Ba Đình",
+      description: "₫1.447.450 cho 2 đêm • ★ 4.77",
+    },
+    {
+      src: "https://media.nomadicmatt.com/2019/airbnb_breakup3.jpg",
+      title: "Khách sạn tại Ba Đình",
+      description: "₫1.447.450 cho 2 đêm • ★ 4.77",
+    },
+    {
+      src: "https://media.nomadicmatt.com/2019/airbnb_breakup3.jpg",
+      title: "Khách sạn tại Ba Đình",
+      description: "₫1.447.450 cho 2 đêm • ★ 4.77",
+    },
+  ];
+
+  const hcmCards = [
+    {
+      src: "https://media.nomadicmatt.com/2019/airbnb_breakup3.jpg",
+      title: "Nơi ở tại Hoàn Kiếm",
+      description: "₫639.059 cho 2 đêm • ★ 4.82",
+      label: "Được khách yêu thích",
+    },
+    {
+      src: "https://media.nomadicmatt.com/2019/airbnb_breakup3.jpg",
+      title: "Căn hộ tại Ba Đình",
+      description: "₫1.169.200 cho 2 đêm • ★ 4.77",
+    },
+    {
+      src: "https://media.nomadicmatt.com/2019/airbnb_breakup3.jpg",
+      title: "Căn hộ tại Hoàn Kiếm",
+      description: "₫944.090 cho 2 đêm • ★ 4.92",
+    },
+    {
+      src: "https://media.nomadicmatt.com/2019/airbnb_breakup3.jpg",
+      title: "Khách sạn tại Ba Đình",
+      description: "₫1.447.450 cho 2 đêm • ★ 4.77",
+    },
+    {
+      src: "https://media.nomadicmatt.com/2019/airbnb_breakup3.jpg",
+      title: "Khách sạn tại Ba Đình",
+      description: "₫1.447.450 cho 2 đêm • ★ 4.77",
+    },
+    {
+      src: "https://media.nomadicmatt.com/2019/airbnb_breakup3.jpg",
+      title: "Khách sạn tại Ba Đình",
+      description: "₫1.447.450 cho 2 đêm • ★ 4.77",
+    },
+  ];
+
+  return (
+    <div className="home">
+      <Section
+        title="Nơi lưu trú được ưa chuộng tại Đà Lạt"
+        cards={dalatCards}
+      />
+      <Section title="Còn phòng tại Hà Nội vào tháng tới" cards={hanoiCards} />
+      <Section title="Nơi lưu trú hấp dẫn ở TP. Hồ Chí Minh" cards={hcmCards} />
+    </div>
+  );
 }
 
 export default Home;

@@ -1,0 +1,17 @@
+.section {
+  margin: 40px 24px;
+}
+
+.section__title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.section__cards {
+  display: flex;
+  overflow-x: auto;
+  gap: 16px;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 8px;
+}
