@@ -47,7 +47,7 @@ CREATE TABLE HOMESTAY (
 
 CREATE TABLE ACCOUNT (
 	ACC_Username		Varchar(50),
-	ACC_Password		Varchar,
+	ACC_Password		Varchar(255),
 	ACC_Firstname		Nvarchar(50),
 	ACC_Lastname		Nvarchar(50),
 	ACC_DateOfBirth		Date,
@@ -58,7 +58,7 @@ CREATE TABLE ACCOUNT (
 );
 
 CREATE TABLE BOOKING (
-	BookID				Char,
+	BookID				Char(10),
 	ACC_Username		Varchar(50),
 	HomestayID			Char(20),
 	B_DateStart			Date,
@@ -72,7 +72,7 @@ CREATE TABLE BOOKING (
 );			
 
 CREATE TABLE REVIEW (
-	ReviewID			Char,
+	ReviewID			Char(10),
 	ACC_Username		Varchar(50),
 	HomestayID			Char(20),
 	RV_Rating			Int,

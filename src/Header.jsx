@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Header.css";
 import SearchIcon from "@mui/icons-material/Search";
 import LanguageIcon from "@mui/icons-material/Language";
@@ -9,6 +9,11 @@ import airbnbLogo from "./assets/airbnb-logo.png";
 
 function Header() {
   const navigate = useNavigate();
+  
+  // Authentication state
+  const [user, setUser] = useState(null);
+
+  // Search functionality states
   const [dateState, setDateState] = useState({
     checkIn: {
       month: new Date().getMonth(),
@@ -41,6 +46,23 @@ function Header() {
   });
   const [hasServiceAnimal, setHasServiceAnimal] = useState(false);
 
+  // Authentication useEffect
+  useEffect(() => {
+    // Kiểm tra trạng thái đăng nhập
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
+  }, []);
+
+  // Authentication handlers
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    setUser(null);
+    window.location.reload();
+  };
+
+  // Search handlers
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setSearchInputs((prev) => ({
@@ -381,10 +403,21 @@ function Header() {
       <div className="header__right">
         <p>Become a host</p>
         <LanguageIcon />
-        <div className="header__menuAvatar">
-          <ExpandMoreIcon />
-          <Avatar />
-        </div>
+        
+        {user ? (
+          <div className="header__userMenu">
+            <span className="header__username">Xin chào, {user.firstName || user.username}!</span>
+            <div className="header__menuAvatar" onClick={handleLogout}>
+              <ExpandMoreIcon />
+              <Avatar />
+            </div>
+          </div>
+        ) : (
+          <div className="header__authButtons">
+            <Link to="/login" className="header__loginBtn">Đăng nhập</Link>
+            <Link to="/register" className="header__registerBtn">Đăng ký</Link>
+          </div>
+        )}
       </div>
     </div>
   );

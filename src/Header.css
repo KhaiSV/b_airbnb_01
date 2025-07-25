@@ -273,6 +273,51 @@
   color: #555;
 }
 
+.header__authButtons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header__loginBtn, .header__registerBtn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.header__loginBtn {
+  color: #333;
+  background: transparent;
+  border: 1px solid #ddd;
+}
+
+.header__loginBtn:hover {
+  background: #f7f7f7;
+}
+
+.header__registerBtn {
+  color: white;
+  background: #ff385c;
+  border: 1px solid #ff385c;
+}
+
+.header__registerBtn:hover {
+  background: #e00b41;
+}
+
+.header__userMenu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header__username {
+  color: #333;
+  font-weight: 500;
+}
+
 .header__menuAvatar {
   display: flex;
   align-items: center;
