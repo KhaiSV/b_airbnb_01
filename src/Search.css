@@ -1,47 +1,87 @@
 .search {
-    position: absolute;
-    top: 35px;
-    left: 25%;
-    width: 100vw;
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.search > h2 {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 559px;
-    padding: 10px;
-    background-color: white;
-    position: absolute;
-    left: 0;
-    top: 380px;
+.search__location,
+.search__serviceAnimal {
+  margin-bottom: 20px;
 }
 
-.search > input {
-    width: 539px;
-    padding: 20px;
-    position: absolute;
-    left: 0;
-    height: 30px;
-    top: 420px;
-    border: none;
+.search__location label,
+.search__serviceAnimal label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #333;
+}
+
+.search__location input {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  outline: none;
+}
+
+.search__location input:focus {
+  border-color: #ff385c;
+}
+
+.search__serviceAnimal input {
+  margin-left: 10px;
+}
+
+h2 {
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+input[type="number"] {
+  width: 100px;
+  padding: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+  outline: none;
+}
+
+input[type="number"]:focus {
+  border-color: #ff385c;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background-color: #ff385c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #e6395a;
+}
+
+@media (min-width: 600px) {
+  .search {
+    padding: 30px;
   }
-  
-.search > input:focus {
-    outline-width: 0;
-}
 
-.search > button {
-    position: absolute;
-    left: 0;
-    top: 480px;
-    text-transform: inherit !important;
-    background-color: #ff7779;
-    color: white;
-    width: 579px;
+  input[type="number"] {
+    width: 150px;
   }
 
-.search > button:hover {
-    background-color: white;
-    color: #ff7779;
+  button {
+    width: auto;
+  }
 }

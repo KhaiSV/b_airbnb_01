@@ -20,7 +20,7 @@
   display: flex;
   align-items: center;
   width: 100%;
-  max-width: 800px;
+  max-width: 1000px;
 }
 
 .header__searchContainer {
@@ -50,22 +50,197 @@
   margin-bottom: 2px;
 }
 
-.header__searchField input {
+.header__searchField input,
+.header__dateInput,
+.header__guestInput {
+  cursor: pointer;
+  padding: 8px;
   border: none;
-  outline: none;
-  font-size: 14px;
-  color: #555;
-  background: transparent;
+  background: #f0f0f0;
+  border-radius: 999px;
   text-align: center;
   width: 100%;
+  font-size: 14px;
 }
 
-.header__searchField input::placeholder {
-  color: #999;
+.header__searchField input::placeholder,
+.header__dateInput::placeholder,
+.header__guestInput::placeholder {
+  color: #000;
+}
+
+/* Date field specific styles */
+.date-field {
+  position: relative;
+}
+
+.header__datePicker {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  z-index: 1000;
+  margin-top: 5px;
+}
+
+.header__dateHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.header__dateHeader button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.header__dateCalendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.header__dateDay {
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 5px;
+  text-align: center;
+}
+
+.header__dateDay.selected {
+  background-color: #ff385c;
+  color: white;
+  border-radius: 50%;
+}
+
+.header__dateSelected {
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* Manual date input styles */
+.header__manualDate {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.header__manualDateInputs {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.header__manualDateInputs input {
+  width: 50px;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 4px;
+  -moz-appearance: textfield;
+  -webkit-appearance: none;
+}
+
+.header__manualDateInputs input::-webkit-outer-spin-button,
+.header__manualDateInputs input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.header__confirmButton {
+  margin-top: 10px;
+  padding: 5px 15px;
+  background-color: #ff385c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Guest field specific styles */
+.guest-field {
+  position: relative;
+}
+
+.header__guestMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  z-index: 1000;
+  margin-top: 5px;
+}
+
+.header__guestOption {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+}
+
+.header__guestOption[data-age]:after {
+  content: attr(data-age);
+  font-size: 10px;
+  color: #777;
+  display: block;
+  text-align: center;
+}
+
+.header__guestControls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.header__guestControls button {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.header__guestControls button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.header__guestControls input {
+  width: 40px;
+  text-align: center;
+  border: none;
+  outline: none;
+  -moz-appearance: textfield;
+  -webkit-appearance: none;
+  padding: 2px;
+}
+
+.header__guestControls input::-webkit-outer-spin-button,
+.header__guestControls input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 /* Hover effect */
-.header__searchField:hover {
+.header__searchField:hover input,
+.header__searchField:hover .header__dateInput,
+.header__searchField:hover .header__guestInput {
   background-color: #f5f5f5;
   border-radius: 12px;
   cursor: pointer;

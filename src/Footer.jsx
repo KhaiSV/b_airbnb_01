@@ -59,8 +59,8 @@ function Footer() {
       </div>
       <div className="copyright">
         <p>
-          <FontAwesomeIcon icon={faCopyright} /> 2025 - Group 01 - AirBnB Clone{" "}
-          <a href="#">Find Out More</a>
+          <FontAwesomeIcon icon={faCopyright} /> 2025 - TMDT - Group 01 - AirBnB
+          Clone <a href="#">Find Out More</a>
         </p>
       </div>
     </footer>
