@@ -15,10 +15,12 @@ function Header() {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
   // Search functionality states
+  const currentDate = new Date();
+  currentDate.setHours(0, 0, 0, 0);
   const [dateState, setDateState] = useState({
     checkIn: {
-      month: new Date().getMonth(),
-      year: new Date().getFullYear(),
+      month: currentDate.getMonth(),
+      year: currentDate.getFullYear(),
       selectedDay: null,
       isOpen: false,
       manualDay: "",
@@ -26,8 +28,8 @@ function Header() {
       manualYear: "",
     },
     checkOut: {
-      month: new Date().getMonth(),
-      year: new Date().getFullYear(),
+      month: currentDate.getMonth(),
+      year: currentDate.getFullYear(),
       selectedDay: null,
       isOpen: false,
       manualDay: "",
@@ -154,6 +156,15 @@ function Header() {
   };
 
   const selectDate = (field, day) => {
+    const selectedDate = new Date(
+      dateState[field].year,
+      dateState[field].month,
+      day
+    );
+    if (selectedDate < currentDate) {
+      alert("Date must be today or later!");
+      return;
+    }
     setDateState((prev) => ({
       ...prev,
       [field]: {
@@ -162,6 +173,31 @@ function Header() {
         isOpen: false,
       },
     }));
+    if (field === "checkIn" && dateState.checkOut.selectedDay) {
+      const checkOutDate = new Date(
+        dateState.checkOut.year,
+        dateState.checkOut.month,
+        dateState.checkOut.selectedDay
+      );
+      if (selectedDate > checkOutDate) {
+        setDateState((prev) => ({
+          ...prev,
+          checkOut: { ...prev.checkOut, selectedDay: null },
+        }));
+      }
+    } else if (field === "checkOut" && dateState.checkIn.selectedDay) {
+      const checkInDate = new Date(
+        dateState.checkIn.year,
+        dateState.checkIn.month,
+        dateState.checkIn.selectedDay
+      );
+      if (selectedDate < checkInDate) {
+        setDateState((prev) => ({
+          ...prev,
+          checkOut: { ...prev.checkOut, selectedDay: null },
+        }));
+      }
+    }
   };
 
   const handleManualDateChange = (field, type, value) => {
@@ -178,9 +214,15 @@ function Header() {
     const day = parseInt(dateState[field].manualDay) || 1;
     const month = parseInt(dateState[field].manualMonth) - 1 || 0;
     const year =
-      parseInt(dateState[field].manualYear) || new Date().getFullYear();
+      parseInt(dateState[field].manualYear) || currentDate.getFullYear();
     const maxDay = new Date(year, month + 1, 0).getDate();
     const validDay = Math.min(Math.max(1, day), maxDay);
+    const selectedDate = new Date(year, month, validDay);
+
+    if (selectedDate < currentDate) {
+      alert("Date must be today or later!");
+      return;
+    }
 
     setDateState((prev) => ({
       ...prev,
@@ -195,6 +237,31 @@ function Header() {
         manualYear: year.toString(),
       },
     }));
+    if (field === "checkOut" && dateState.checkIn.selectedDay) {
+      const checkInDate = new Date(
+        dateState.checkIn.year,
+        dateState.checkIn.month,
+        dateState.checkIn.selectedDay
+      );
+      if (selectedDate < checkInDate) {
+        setDateState((prev) => ({
+          ...prev,
+          checkOut: { ...prev.checkOut, selectedDay: null },
+        }));
+      }
+    } else if (field === "checkIn" && dateState.checkOut.selectedDay) {
+      const checkOutDate = new Date(
+        dateState.checkOut.year,
+        dateState.checkOut.month,
+        dateState.checkOut.selectedDay
+      );
+      if (selectedDate > checkOutDate) {
+        setDateState((prev) => ({
+          ...prev,
+          checkIn: { ...prev.checkIn, selectedDay: null },
+        }));
+      }
+    }
   };
 
   return (
@@ -282,17 +349,28 @@ function Header() {
                         ).getDate(),
                       },
                       (_, i) => i + 1
-                    ).map((day) => (
-                      <button
-                        key={day}
-                        className={`header__dateDay ${
-                          dateState[field].selectedDay === day ? "selected" : ""
-                        }`}
-                        onClick={() => selectDate(field, day)}
-                      >
-                        {day}
-                      </button>
-                    ))}
+                    ).map((day) => {
+                      const date = new Date(
+                        dateState[field].year,
+                        dateState[field].month,
+                        day
+                      );
+                      const isDisabled = date < currentDate;
+                      return (
+                        <button
+                          key={day}
+                          className={`header__dateDay ${
+                            dateState[field].selectedDay === day
+                              ? "selected"
+                              : ""
+                          } ${isDisabled ? "disabled" : ""}`}
+                          onClick={() => !isDisabled && selectDate(field, day)}
+                          disabled={isDisabled}
+                        >
+                          {day}
+                        </button>
+                      );
+                    })}
                   </div>
                   <div className="header__manualDate">
                     <span>Nhập ngày cụ thể</span>

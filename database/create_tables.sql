@@ -1,18 +1,20 @@
-/*
-go
-use master
-go
-drop database DB_Airbnb;
-go
+﻿/*
+-- Remove old DB
+USE master;
+GO
+ALTER DATABASE DB_Airbnb SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+GO
+DROP DATABASE DB_Airbnb;
+GO
 */
 
-go
-use master
-go
-create database DB_Airbnb;
-go
-use DB_Airbnb;
-go
+GO
+USE master
+GO
+CREATE DATABASE DB_Airbnb;
+GO
+USE DB_Airbnb;
+GO
 
 -- Create TB
 CREATE TABLE HOST (
@@ -41,25 +43,29 @@ CREATE TABLE HOMESTAY (
 	HS_AvgRating		Float,
 	HS_NumOfReview		Int,
 	HS_ListOfImage		Text,
-	HS_Amenity			Text,
+	HS_Room				Text,
+	HS_Descripton		Text,
+	HS_Amenity			Char(50),
 	PRIMARY KEY (HomestayID)
 );
 
 CREATE TABLE ACCOUNT (
-	ACC_Username		Varchar(50),
+	AccountID			Char(10),
+	ACC_Username		Varchar(50) UNIQUE,
 	ACC_Password		Varchar(255),
 	ACC_Firstname		Nvarchar(50),
 	ACC_Lastname		Nvarchar(50),
+	ACC_Sex				Char CHECK  (ACC_Sex IN ('M', 'F', 'O')),
 	ACC_DateOfBirth		Date,
 	ACC_Email			Varchar(50),
 	ACC_DateCreateAcc	Date,
 	--ACC_Avatar
-	PRIMARY KEY (ACC_Username)
+	PRIMARY KEY (AccountID)
 );
 
 CREATE TABLE BOOKING (
-	BookID				Char(10),
-	ACC_Username		Varchar(50),
+	BookingID			Char(20),
+	AccountID			Char(10),
 	HomestayID			Char(20),
 	B_DateStart			Date,
 	B_DateEnd			Date,
@@ -68,12 +74,13 @@ CREATE TABLE BOOKING (
 	B_Children			Int,
 	B_Infants			Int,
 	B_Pets				Int,
-	PRIMARY KEY (BookID)
+	B_Status			Varchar(20) CHECK  (B_Status IN ('Unpaid', 'Booked', 'Canceled')),
+	PRIMARY KEY (BookingID)
 );			
 
 CREATE TABLE REVIEW (
-	ReviewID			Char(10),
-	ACC_Username		Varchar(50),
+	ReviewID			Char(20),
+	AccountID			Char(10),
 	HomestayID			Char(20),
 	RV_Rating			Int,
 	RV_ReviewText		Text,
@@ -81,21 +88,69 @@ CREATE TABLE REVIEW (
 	PRIMARY KEY (ReviewID)
 );
 
+CREATE TABLE PAYMENT (
+    PaymentID			Char(20),
+    BookingID			Char(20),
+	AccountID			Char(10),
+    PAY_Time			Datetime,
+    PAY_Method			Nvarchar(50),
+    PAY_Amount			Int,
+    PAY_Status			Nvarchar(20),
+    PRIMARY KEY (PaymentID)
+);
+
+
 -- Create FK
+GO
 ALTER TABLE HOMESTAY
 	ADD CONSTRAINT FK_HOMESTAY_HOST
 	FOREIGN KEY (HostID) REFERENCES HOST(HostID);
+
 ALTER TABLE BOOKING
 	ADD CONSTRAINT FK_BOOKING_HOMESTAY
 	FOREIGN KEY (HomestayID) REFERENCES HOMESTAY(HomestayID);
 ALTER TABLE REVIEW
 	ADD CONSTRAINT FK_REVIEW_HOMESTAY
 	FOREIGN KEY (HomestayID) REFERENCES HOMESTAY(HomestayID);
+
 ALTER TABLE BOOKING
 	ADD CONSTRAINT FK_BOOKING_ACCOUNT
-	FOREIGN KEY (ACC_Username) REFERENCES ACCOUNT(ACC_Username);
+	FOREIGN KEY (AccountID) REFERENCES ACCOUNT(AccountID);
 ALTER TABLE REVIEW
 	ADD CONSTRAINT FK_REVIEW_ACCOUNT
-	FOREIGN KEY (ACC_Username) REFERENCES ACCOUNT(ACC_Username);
+	FOREIGN KEY (AccountID) REFERENCES ACCOUNT(AccountID);
 
--- SELECT * FROM HOMESTAY;
+	
+ALTER TABLE PAYMENT
+	ADD CONSTRAINT FK_PAYMENT_BOOKING
+	FOREIGN KEY (BookingID) REFERENCES BOOKING(BookingID);
+ALTER TABLE PAYMENT
+	ADD CONSTRAINT FK_PAYMENT_ACCOUNT
+	FOREIGN KEY (AccountID) REFERENCES ACCOUNT(AccountID);
+
+GO
+CREATE OR ALTER TRIGGER T_PAYMENT_BOOKING
+ON PAYMENT
+AFTER UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE b
+    SET b.B_Status = 'Booked'
+    FROM BOOKING b
+    JOIN inserted i ON i.BookingID = b.BookingID
+    JOIN deleted d ON d.BookingID = b.BookingID
+    WHERE 
+        d.PAY_Status <> 'Paid' AND
+        i.PAY_Status = 'Paid';
+END;
+
+/*
+SELECT * FROM ACCOUNT;
+SELECT * FROM HOMESTAY;
+*/
+/*
+DELETE FROM ACCOUNT;
+DELETE FROM HOMESTAY;
+*/

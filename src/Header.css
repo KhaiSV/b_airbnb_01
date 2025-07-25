@@ -90,6 +90,7 @@
   border-radius: 20px;
   text-align: center;
   width: 100%;
+<<<<<<< HEAD
   font-size: 12px;
   font-weight: 400;
 }
@@ -97,12 +98,23 @@
 .header__searchField input::placeholder,
 .header__dateInput::placeholder,
 .header__guestInput::placeholder {
-  color: #000;
+  color: #999;
 }
 
 /* Date field specific styles */
 .date-field {
   position: relative;
+}
+
+.header__dateInput {
+  cursor: pointer;
+  padding: 8px;
+  border: none;
+  background: #f0f0f0;
+  border-radius: 999px;
+  text-align: center;
+  width: 100%;
+  min-width: 80px;
 }
 
 .header__datePicker {
@@ -155,6 +167,12 @@
   border-radius: 50%;
 }
 
+.header__dateDay.disabled {
+  color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
 .header__dateSelected {
   text-align: center;
   margin-top: 10px;
@@ -164,6 +182,7 @@
 .header__manualDate {
   margin-top: 10px;
   text-align: center;
+  max-width: 100%; /* Ensure it fits within picker */
 }
 
 .header__manualDateInputs {
@@ -171,16 +190,18 @@
   justify-content: center;
   gap: 5px;
   margin-top: 5px;
+  flex-wrap: wrap; /* Allow wrapping if needed */
 }
 
 .header__manualDateInputs input {
-  width: 50px;
+  width: 30px;
   text-align: center;
   border: 1px solid #ddd;
   border-radius: 4px;
   padding: 4px;
   -moz-appearance: textfield;
   -webkit-appearance: none;
+  box-sizing: border-box; /* Include padding in width */
 }
 
 .header__manualDateInputs input::-webkit-outer-spin-button,
@@ -202,6 +223,17 @@
 /* Guest field specific styles */
 .guest-field {
   position: relative;
+}
+
+.header__guestInput {
+  cursor: pointer;
+  padding: 8px;
+  border: none;
+  background: #f0f0f0;
+  border-radius: 999px;
+  text-align: center;
+  width: 100%;
+  min-width: 80px;
 }
 
 .header__guestMenu {
