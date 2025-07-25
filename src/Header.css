@@ -42,6 +42,7 @@
   margin: 0 4px;
   padding: 8px 12px;
   text-align: center;
+  min-width: 0;
 }
 
 .header__searchField label {
@@ -61,17 +62,30 @@
   text-align: center;
   width: 100%;
   font-size: 14px;
+  min-width: 50px;
+  box-sizing: border-box;
 }
 
 .header__searchField input::placeholder,
 .header__dateInput::placeholder,
 .header__guestInput::placeholder {
-  color: #000;
+  color: #999;
 }
 
 /* Date field specific styles */
 .date-field {
   position: relative;
+}
+
+.header__dateInput {
+  cursor: pointer;
+  padding: 8px;
+  border: none;
+  background: #f0f0f0;
+  border-radius: 999px;
+  text-align: center;
+  width: 100%;
+  min-width: 80px;
 }
 
 .header__datePicker {
@@ -86,6 +100,8 @@
   padding: 10px;
   z-index: 1000;
   margin-top: 5px;
+  max-width: 300px; /* Constrain width */
+  overflow: hidden; /* Prevent overflow */
 }
 
 .header__dateHeader {
@@ -122,6 +138,12 @@
   border-radius: 50%;
 }
 
+.header__dateDay.disabled {
+  color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
 .header__dateSelected {
   text-align: center;
   margin-top: 10px;
@@ -131,6 +153,7 @@
 .header__manualDate {
   margin-top: 10px;
   text-align: center;
+  max-width: 100%; /* Ensure it fits within picker */
 }
 
 .header__manualDateInputs {
@@ -138,16 +161,18 @@
   justify-content: center;
   gap: 5px;
   margin-top: 5px;
+  flex-wrap: wrap; /* Allow wrapping if needed */
 }
 
 .header__manualDateInputs input {
-  width: 50px;
+  width: 30px;
   text-align: center;
   border: 1px solid #ddd;
   border-radius: 4px;
   padding: 4px;
   -moz-appearance: textfield;
   -webkit-appearance: none;
+  box-sizing: border-box; /* Include padding in width */
 }
 
 .header__manualDateInputs input::-webkit-outer-spin-button,
@@ -169,6 +194,17 @@
 /* Guest field specific styles */
 .guest-field {
   position: relative;
+}
+
+.header__guestInput {
+  cursor: pointer;
+  padding: 8px;
+  border: none;
+  background: #f0f0f0;
+  border-radius: 999px;
+  text-align: center;
+  width: 100%;
+  min-width: 80px;
 }
 
 .header__guestMenu {
