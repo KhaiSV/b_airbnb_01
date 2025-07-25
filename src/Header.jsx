@@ -12,6 +12,7 @@ function Header() {
   
   // Authentication state
   const [user, setUser] = useState(null);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
   // Search functionality states
   const [dateState, setDateState] = useState({
@@ -53,12 +54,26 @@ function Header() {
     if (userData) {
       setUser(JSON.parse(userData));
     }
+
+    // Đóng dropdown khi click bên ngoài
+    const handleClickOutside = (event) => {
+      if (!event.target.closest('.header__userMenu')) {
+        setUserDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   // Authentication handlers
   const handleLogout = () => {
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
     setUser(null);
+    setUserDropdownOpen(false);
     window.location.reload();
   };
 
@@ -407,10 +422,26 @@ function Header() {
         {user ? (
           <div className="header__userMenu">
             <span className="header__username">Xin chào, {user.firstName || user.username}!</span>
-            <div className="header__menuAvatar" onClick={handleLogout}>
+            <div 
+              className="header__menuAvatar" 
+              onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+            >
               <ExpandMoreIcon />
               <Avatar />
             </div>
+            {userDropdownOpen && (
+              <div className="header__userDropdown">
+                <Link to="/profile" className="header__dropdownItem" onClick={() => setUserDropdownOpen(false)}>
+                  <span>Thông tin cá nhân</span>
+                </Link>
+                <Link to="/change-password" className="header__dropdownItem" onClick={() => setUserDropdownOpen(false)}>
+                  <span>Đổi mật khẩu</span>
+                </Link>
+                <div className="header__dropdownItem" onClick={handleLogout}>
+                  <span>Đăng xuất</span>
+                </div>
+              </div>
+            )}
           </div>
         ) : (
           <div className="header__authButtons">

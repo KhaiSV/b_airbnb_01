@@ -1,7 +1,8 @@
 .header {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 180px 1fr 320px;
   align-items: center;
+  gap: 20px;
   padding: 12px 24px;
   background-color: white;
   border-bottom: 1px solid #eee;
@@ -11,27 +12,42 @@
 }
 
 /* Logo */
-.header__logo img {
-  height: 80px;
+.header__logo {
+  justify-self: start;
 }
 
-/* Center search bar */
+.header__logo img {
+  height: 60px;
+}
+
+/* Center section */
 .header__center {
   display: flex;
   align-items: center;
   width: 100%;
-  max-width: 1000px;
+  max-width: 700px;
+  margin: 0 auto;
+  justify-self: center;
+}
+.header__center {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  justify-self: center;
 }
 
 .header__searchContainer {
   display: flex;
   align-items: center;
   border: 1px solid #ddd;
-  padding: 8px 16px;
+  padding: 6px 12px;
   border-radius: 999px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   width: 100%;
   background-color: #fff;
+  height: 48px;
 }
 
 .header__searchField {
@@ -39,28 +55,43 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 0 4px;
-  padding: 8px 12px;
+  margin: 0 2px;
+  padding: 4px 8px;
   text-align: center;
+  min-width: 0;
+  position: relative;
+}
+
+.header__searchField:not(:last-of-type):after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 60%;
+  width: 1px;
+  background-color: #ddd;
 }
 
 .header__searchField label {
-  font-size: 12px;
+  font-size: 10px;
   color: #777;
-  margin-bottom: 2px;
+  margin-bottom: 1px;
+  font-weight: 600;
 }
 
 .header__searchField input,
 .header__dateInput,
 .header__guestInput {
   cursor: pointer;
-  padding: 8px;
+  padding: 6px;
   border: none;
-  background: #f0f0f0;
-  border-radius: 999px;
+  background: transparent;
+  border-radius: 20px;
   text-align: center;
   width: 100%;
-  font-size: 14px;
+  font-size: 12px;
+  font-weight: 400;
 }
 
 .header__searchField input::placeholder,
@@ -86,6 +117,8 @@
   padding: 10px;
   z-index: 1000;
   margin-top: 5px;
+  max-width: 280px;
+  width: 280px;
 }
 
 .header__dateHeader {
@@ -183,6 +216,8 @@
   padding: 10px;
   z-index: 1000;
   margin-top: 5px;
+  max-width: 300px;
+  width: 300px;
 }
 
 .header__guestOption {
@@ -250,33 +285,54 @@
   background-color: #ff385c;
   border: none;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   margin-left: 8px;
+  flex-shrink: 0;
 }
 
 .header__searchButton .MuiSvgIcon-root {
   color: white;
-  font-size: 20px;
+  font-size: 16px;
 }
 
 /* Right section */
 .header__right {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   font-size: 14px;
   color: #555;
+  justify-self: end;
+}
+
+.header__right p {
+  margin: 0;
+  white-space: nowrap;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.header__right p:hover {
+  background-color: #f7f7f7;
 }
 
 .header__authButtons {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
+  border: 1px solid #ddd;
+  border-radius: 24px;
+  padding: 4px;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .header__loginBtn, .header__registerBtn {
@@ -285,12 +341,14 @@
   text-decoration: none;
   font-weight: 500;
   transition: all 0.3s ease;
+  font-size: 13px;
+  white-space: nowrap;
 }
 
 .header__loginBtn {
   color: #333;
   background: transparent;
-  border: 1px solid #ddd;
+  border: none;
 }
 
 .header__loginBtn:hover {
@@ -300,7 +358,7 @@
 .header__registerBtn {
   color: white;
   background: #ff385c;
-  border: 1px solid #ff385c;
+  border: none;
 }
 
 .header__registerBtn:hover {
@@ -311,19 +369,73 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  border: 1px solid #ddd;
+  border-radius: 24px;
+  padding: 4px 8px;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .header__username {
   color: #333;
   font-weight: 500;
+  font-size: 13px;
+  white-space: nowrap;
 }
 
 .header__menuAvatar {
   display: flex;
   align-items: center;
-  border: 1px solid #ccc;
-  padding: 6px 8px;
-  border-radius: 24px;
-  gap: 8px;
+  padding: 4px 8px;
+  border-radius: 20px;
+  gap: 6px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.header__menuAvatar:hover {
+  background-color: #f7f7f7;
+}
+
+/* User Dropdown Menu */
+.header__userMenu {
+  position: relative;
+}
+
+.header__userDropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 200px;
+  z-index: 1000;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.header__dropdownItem {
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid #f0f0f0;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.header__dropdownItem:last-child {
+  border-bottom: none;
+}
+
+.header__dropdownItem:hover {
+  background-color: #f8f9fa;
+}
+
+.header__dropdownItem span {
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
 }
