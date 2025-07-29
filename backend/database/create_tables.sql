@@ -51,15 +51,15 @@ CREATE TABLE HOMESTAY (
 
 CREATE TABLE ACCOUNT (
 	AccountID			Char(10),
-	ACC_Username		Varchar(50) UNIQUE,
-	ACC_Password		Varchar(255),
-	ACC_Firstname		Nvarchar(50),
-	ACC_Lastname		Nvarchar(50),
-	ACC_Sex				Char CHECK  (ACC_Sex IN ('M', 'F', 'O')),
-	ACC_DateOfBirth		Date,
-	ACC_Email			Varchar(50),
-	ACC_DateCreateAcc	Date,
-	--ACC_Avatar
+	AC_Username			Varchar(50) UNIQUE,
+	AC_Password			Varchar(255),
+	AC_Firstname		Nvarchar(50),
+	AC_Lastname			Nvarchar(50),
+	AC_Sex				Char CHECK (AC_Sex IN ('M', 'F', 'O')),
+	AC_DateOfBirth		Date,
+	AC_Email			Varchar(50),
+	AC_DateCreateAcc	Date,
+	--AC_Avatar
 	PRIMARY KEY (AccountID)
 );
 
@@ -74,9 +74,16 @@ CREATE TABLE BOOKING (
 	B_Children			Int,
 	B_Infants			Int,
 	B_Pets				Int,
-	B_Status			Varchar(20) CHECK  (B_Status IN ('Unpaid', 'Booked', 'Canceled')),
+	B_Status			Varchar(20) CHECK (B_Status IN (
+							'Pending',     -- Đặt nhưng chưa thanh toán
+							'Paid',        -- Đã thanh toán, chưa ở
+							'CheckedIn',   -- Đang ở
+							'CheckedOut',  -- Đã ở xong
+							'Canceled',    -- Hủy
+							'NoShow'       -- Không đến
+						)),
 	PRIMARY KEY (BookingID)
-);			
+);
 
 CREATE TABLE REVIEW (
 	ReviewID			Char(20),
@@ -92,10 +99,16 @@ CREATE TABLE PAYMENT (
     PaymentID			Char(20),
     BookingID			Char(20),
 	AccountID			Char(10),
-    PAY_Time			Datetime,
-    PAY_Method			Nvarchar(50),
-    PAY_Amount			Int,
-    PAY_Status			Nvarchar(20),
+    P_Time				Datetime,
+    P_Method			Nvarchar(50),
+    P_Amount			Int,
+    P_Status			Nvarchar(20) CHECK (P_Status IN (
+							'Pending',    -- Mới tạo, chờ thanh toán
+							'Paid',       -- Thành công
+							'Failed',     -- Thất bại
+							'Canceled',   -- Hủy thanh toán
+							'Refunded'    -- Đã hoàn tiền
+						)),
     PRIMARY KEY (PaymentID)
 );
 
@@ -120,7 +133,6 @@ ALTER TABLE REVIEW
 	ADD CONSTRAINT FK_REVIEW_ACCOUNT
 	FOREIGN KEY (AccountID) REFERENCES ACCOUNT(AccountID);
 
-	
 ALTER TABLE PAYMENT
 	ADD CONSTRAINT FK_PAYMENT_BOOKING
 	FOREIGN KEY (BookingID) REFERENCES BOOKING(BookingID);
@@ -128,29 +140,14 @@ ALTER TABLE PAYMENT
 	ADD CONSTRAINT FK_PAYMENT_ACCOUNT
 	FOREIGN KEY (AccountID) REFERENCES ACCOUNT(AccountID);
 
-GO
-CREATE OR ALTER TRIGGER T_PAYMENT_BOOKING
-ON PAYMENT
-AFTER UPDATE
-AS
-BEGIN
-    SET NOCOUNT ON;
-
-    UPDATE b
-    SET b.B_Status = 'Booked'
-    FROM BOOKING b
-    JOIN inserted i ON i.BookingID = b.BookingID
-    JOIN deleted d ON d.BookingID = b.BookingID
-    WHERE 
-        d.PAY_Status <> 'Paid' AND
-        i.PAY_Status = 'Paid';
-END;
-
 /*
-SELECT * FROM ACCOUNT;
 SELECT * FROM HOMESTAY;
+SELECT * FROM ACCOUNT;
+SELECT * FROM BOOKING;
+SELECT * FROM PAYMENT;
 */
 /*
+DELETE FROM BOOKING;
 DELETE FROM ACCOUNT;
 DELETE FROM HOMESTAY;
 */

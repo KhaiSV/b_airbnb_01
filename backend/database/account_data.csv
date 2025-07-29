@@ -1,4 +1,4 @@
-﻿AccountID,ACC_Username,ACC_Password,ACC_Firstname,ACC_Lastname,ACC_Sex,ACC_DateOfBirth,ACC_Email,ACC_DateCreateAcc
+﻿AccountID,AC_Username,AC_Password,AC_Firstname,AC_Lastname,AC_Sex,AC_DateOfBirth,AC_Email,AC_DateCreateAcc
 AC00000001,AC00000001,AC00000001,Huy,Nguyễn,M,2004-06-23,AC00000001@example.com,2024-10-01
 AC00000002,AC00000002,AC00000002,Anh,Nguyễn,F,1988-05-28,AC00000002@example.com,2024-06-18
 AC00000003,AC00000003,AC00000003,Hương,Trần,F,2000-05-16,AC00000003@example.com,2022-11-26

@@ -2,7 +2,8 @@ import pandas as pd
 import pyodbc
 import os
 from dotenv import load_dotenv
-from datetime import datetime
+from datetime import date, datetime, timedelta
+import random
 
 load_dotenv()
 
@@ -21,6 +22,65 @@ def connect_to_database():
         print(f"Lỗi kết nối database: {e}")
         return None
 
+from tqdm import tqdm
+
+def pad(num, width):
+    return str(num).zfill(width)
+
+def generate_booking_id(i):
+    return f'BK{pad(i, 18)}'
+
+def generate_account_id():
+    return f'AC{pad(random.randint(1, 50), 8)}'
+
+def generate_homestay_id():
+    return f'HS{pad(random.randint(1, 100), 18)}'
+
+def random_date(start, end):
+    """Generate random date between start and end"""
+    delta = end - start
+    return start + timedelta(days=random.randint(0, delta.days))
+
+def generate_booking_row(i):
+    booking_id = generate_booking_id(i)
+    account_id = generate_account_id()
+    homestay_id = generate_homestay_id()
+
+    today = date.today()
+    date_book = random_date(today - timedelta(days=60), today - timedelta(days=1))
+    date_start = random_date(date_book + timedelta(days=1), date_book + timedelta(days=15))
+    stay_length = random.randint(1, 5)
+    date_end = date_start + timedelta(days=stay_length)
+
+    adults = random.randint(1, 4)
+    children = random.randint(0, 3)
+    infants = random.randint(0, 2)
+    pets = random.randint(0, 1)
+
+    # Chọn status dựa trên ngày hiện tại
+    if date_book <= today < date_start:
+        status = random.choice(['Pending', 'Paid', 'Canceled'])
+    elif date_start <= today <= date_end:
+        status = random.choice(['CheckedIn', 'Canceled', 'NoShow'])
+    elif today > date_end:
+        status = random.choice(['CheckedOut', 'Canceled', 'NoShow'])
+    else:
+        status = 'Pending'
+
+    return (
+        booking_id,
+        account_id,
+        homestay_id,
+        date_start,
+        date_end,
+        date_book,
+        adults,
+        children,
+        infants,
+        pets,
+        status
+    )
+
 def import_homestay_data(csv_file="homestay_data.csv"):
     """Import dữ liệu từ homestay_data.csv vào bảng HOMESTAY"""
     try:
@@ -37,7 +97,7 @@ def import_homestay_data(csv_file="homestay_data.csv"):
         
         # Tạo HomestayID nếu chưa có
         if 'HomestayID' not in df.columns:
-            df['HomestayID'] = ['HS' + str(i+1).zfill(8) for i in range(len(df))]
+            df['HomestayID'] = ['HS' + str(i+1).zfill(18) for i in range(len(df))]
         
         print(f"Đã đọc {len(df)} bản ghi homestay")
         
@@ -118,23 +178,23 @@ def import_account_data(csv_file="account_data.csv"):
         for index, row in df.iterrows():
             try:
                 # Xử lý dữ liệu ngày tháng
-                date_of_birth = pd.to_datetime(row['ACC_DateOfBirth']).date() if pd.notna(row['ACC_DateOfBirth']) else None
-                date_create_acc = pd.to_datetime(row['ACC_DateCreateAcc']).date() if pd.notna(row['ACC_DateCreateAcc']) else None
+                date_of_birth = pd.to_datetime(row['AC_DateOfBirth']).date() if pd.notna(row['AC_DateOfBirth']) else None
+                date_create_acc = pd.to_datetime(row['AC_DateCreateAcc']).date() if pd.notna(row['AC_DateCreateAcc']) else None
                 
                 cursor.execute("""
                     INSERT INTO ACCOUNT (
-                        AccountID, ACC_Username, ACC_Password, ACC_Firstname, 
-                        ACC_Lastname, ACC_Sex, ACC_DateOfBirth, ACC_Email, ACC_DateCreateAcc
+                        AccountID, AC_Username, AC_Password, AC_Firstname, 
+                        AC_Lastname, AC_Sex, AC_DateOfBirth, AC_Email, AC_DateCreateAcc
                     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, 
                     row['AccountID'],
-                    row['ACC_Username'],
-                    row['ACC_Password'],
-                    row['ACC_Firstname'],
-                    row['ACC_Lastname'],
-                    row['ACC_Sex'],
+                    row['AC_Username'],
+                    row['AC_Password'],
+                    row['AC_Firstname'],
+                    row['AC_Lastname'],
+                    row['AC_Sex'],
                     date_of_birth,
-                    row['ACC_Email'],
+                    row['AC_Email'],
                     date_create_acc
                 )
                 success_count += 1
@@ -153,6 +213,34 @@ def import_account_data(csv_file="account_data.csv"):
         print(f"Lỗi import account: {e}")
         return False
 
+def insert_booking_data(n=200):
+    try:
+        conn = pyodbc.connect(
+            "Driver={ODBC Driver 17 for SQL Server};"
+            "Server=localhost;"
+            "Database=DB_Airbnb;"
+            "Trusted_Connection=yes;"
+        )
+        cursor = conn.cursor()
+
+        for i in range(1, n+1):
+            row = generate_booking_row(i)
+            cursor.execute("""
+                INSERT INTO BOOKING (
+                    BookingID, AccountID, HomestayID,
+                    B_DateStart, B_DateEnd, B_DateBook,
+                    B_Adults, B_Children, B_Infants, B_Pets,
+                    B_Status
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, row)
+
+        conn.commit()
+        print(f"Đã chèn {n} dòng BOOKING thành công.")
+        conn.close()
+
+    except Exception as e:
+        print("❌ Lỗi:", e)
+
 def main():
     print("\n--- Import cả HOMESTAY và ACCOUNT ---")
     print("Bắt đầu import homestay...")
@@ -160,6 +248,9 @@ def main():
     
     print("\nBắt đầu import account...")
     account_success = import_account_data()
+
+    print("\nBắt đầu generate booking...")
+    insert_booking_data(200)
     
     if homestay_success and account_success:
         print("\nImport tất cả dữ liệu thành công!")
