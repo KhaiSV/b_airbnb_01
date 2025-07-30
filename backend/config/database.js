@@ -2,12 +2,22 @@ const sql = require('mssql');
 require('dotenv').config();
 
 const config = {
-    server: process.env.SERVER_NAME || 'localhost\\SQLEXPRESS',
-    database: 'DB_Airbnb',
+    // server: process.env.SERVER_NAME || 'localhost\\SQLEXPRESS',
+    // database: 'DB_Airbnb',
+    // user: process.env.DB_USER || 'your_username',
+    // password: process.env.DB_PASSWORD || 'your_password',
+    // options: {
+    //     trustServerCertificate: true,
+    //     trustedConnection: true,
+    //     enableArithAbort: true,
+    //     encrypt: false,
+    //     port: 1433
+    // },
+    server: process.env.SERVER_NAME || 'PLASMAPEA',
+    database: process.env.DB_DATABASE || 'DB_Airbnb',
     options: {
         trustServerCertificate: true,
         trustedConnection: true,
-        enableArithAbort: true,
         encrypt: false,
         port: 1433
     },
@@ -17,6 +27,7 @@ const config = {
         idleTimeoutMillis: 30000
     }
 };
+console.log('Database config:', config);
 
 class Database {
     constructor() {
@@ -42,7 +53,6 @@ class Database {
             
             const request = this.pool.request();
             
-            // Add parameters if provided
             params.forEach((param, index) => {
                 request.input(`param${index}`, param);
             });

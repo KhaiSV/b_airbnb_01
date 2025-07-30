@@ -32,9 +32,19 @@ class ApiService {
 
     // Đăng ký
     static async register(userData) {
+        // Đảm bảo khớp với backend (AC_Username, AC_Password, v.v.)
+        const formattedData = {
+            AC_Username: userData.username,
+            AC_Password: userData.password,
+            AC_Firstname: userData.firstName,
+            AC_Lastname: userData.lastName,
+            AC_Sex: userData.sex,
+            AC_DateOfBirth: userData.dateOfBirth,
+            AC_Email: userData.email,
+        };
         return await this.makeRequest('/auth/register', {
             method: 'POST',
-            body: JSON.stringify(userData)
+            body: JSON.stringify(formattedData)
         });
     }
 

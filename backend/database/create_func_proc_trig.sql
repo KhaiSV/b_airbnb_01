@@ -2,7 +2,41 @@
 
 -- Function
 GO
-CREATE OR ALTER PROCEDURE F_INSERT_BOOKING
+
+-- Procedure
+CREATE OR ALTER PROCEDURE P_INSERT_ACCOUNT
+	@AC_Username		Varchar(50),
+	@AC_Password		Varchar(255),
+	@AC_Firstname		Nvarchar(50),
+	@AC_Lastname		Nvarchar(50),
+	@AC_Sex				Char,
+	@AC_DateOfBirth		Date,
+	@AC_Email			Varchar(50),
+	@AC_DateCreateAcc	Date
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DECLARE @NextNumber BIGINT;
+	SELECT @NextNumber = 
+		ISNULL(MAX(CAST(SUBSTRING(AccountID, 3, 8) AS BIGINT)), 0) + 1
+	FROM ACCOUNT;
+	
+
+	DECLARE @NewAccountID CHAR(10);
+	SET @NewAccountID = 'AC' + RIGHT(REPLICATE('0', 8) + CAST(@NextNumber AS VARCHAR(8)), 8);
+
+	INSERT INTO ACCOUNT (
+		AccountID, AC_Username, AC_Password, AC_Firstname,
+		AC_Lastname, AC_Sex, AC_DateOfBirth, AC_Email, AC_DateCreateAcc
+	) VALUES (
+		@NewAccountID, @AC_Username, @AC_Password, @AC_Firstname,
+		@AC_Lastname, @AC_Sex, @AC_DateOfBirth, @AC_Email, @AC_DateCreateAcc
+	);
+END;
+
+/*
+CREATE OR ALTER PROCEDURE P_INSERT_BOOKING
 	@AccountID		CHAR(10),
 	@HomestayID		CHAR(20),
 	@B_DateStart	DATE,
@@ -35,9 +69,10 @@ BEGIN
 		'Pending'
 	);
 END;
-
+*/
 
 -- Trigger
+/*
 GO
 CREATE OR ALTER TRIGGER T_PAYMENT_BOOKING
 ON PAYMENT
@@ -55,6 +90,7 @@ BEGIN
         d.PAY_Status <> 'Paid' AND
         i.PAY_Status = 'Paid';
 END;
+*/
 
 /*
 SELECT * FROM HOMESTAY;

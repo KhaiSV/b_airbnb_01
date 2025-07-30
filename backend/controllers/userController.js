@@ -8,67 +8,70 @@ class UserController {
     // Đăng ký user mới
     static async register(req, res) {
         try {
-            const { username, email, firstName, lastName, password, dateOfBirth } = req.body;
+            const { AC_Username, AC_Email, AC_Firstname, AC_Lastname, AC_Password, AC_DateOfBirth, AC_Sex } = req.body;
 
             // Validate input
-            if (!username || !email || !firstName || !lastName || !password) {
+            if (!AC_Username || !AC_Email || !AC_Firstname || !AC_Lastname || !AC_Password || !AC_DateOfBirth) {
                 return res.status(400).json({ 
                     error: 'Vui lòng điền đầy đủ thông tin bắt buộc' 
                 });
             }
 
-            // Kiểm tra user đã tồn tại
-            const existingUser = users.find(user => 
-                user.username === username || user.email === email
-            );
-
-            if (existingUser) {
-                return res.status(409).json({ 
-                    error: 'Tên đăng nhập hoặc email đã tồn tại' 
+            // Kiểm tra định dạng email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(AC_Email)) {
+                return res.status(400).json({ 
+                    error: 'Email không hợp lệ' 
                 });
             }
 
-            // Mã hóa mật khẩu
-            const hashedPassword = await AuthService.hashPassword(password);
+            // Kiểm tra định dạng ngày sinh
+            const dateObj = new Date(AC_DateOfBirth);
+            if (isNaN(dateObj.getTime()) || dateObj > new Date()) {
+                return res.status(400).json({ 
+                    error: 'Ngày sinh không hợp lệ hoặc nằm trong tương lai' 
+                });
+            }
 
-            // Thêm user vào memory (tạm thời)
-            const newUser = {
-                id: users.length + 1,
-                username,
-                email,
-                firstName,
-                lastName,
-                password: hashedPassword,
-                dateOfBirth: dateOfBirth || null,
-                dateCreateAcc: new Date()
+            // Kiểm tra AC_Sex hợp lệ
+            const validSexValues = ['M', 'F', 'O'];
+            if (!AC_Sex || !validSexValues.includes(AC_Sex)) {
+                return res.status(400).json({ 
+                    error: 'Giới tính không hợp lệ. Vui lòng chọn M, F hoặc O.' 
+                });
+            }
+
+            // Chuẩn bị dữ liệu gửi vào AuthService
+            const userData = {
+                AC_Username,
+                AC_Password,
+                AC_Firstname,
+                AC_Lastname,
+                AC_Sex,
+                AC_DateOfBirth,
+                AC_Email
             };
-            
-            users.push(newUser);
 
-            // Tạo token
-            const token = AuthService.generateToken({
-                id: newUser.id,
-                username,
-                email,
-                firstName,
-                lastName
-            });
+            // Gọi AuthService để đăng ký
+            const result = await AuthService.register(userData);
 
             res.status(201).json({
-                message: 'Đăng ký thành công',
-                token,
-                user: {
-                    username,
-                    email,
-                    firstName,
-                    lastName
-                }
+                message: result.message,
+                token: result.token,
+                accountId: result.accountId
             });
 
-        } catch (error) {
-            console.error('Register error:', error);
-            res.status(500).json({ error: 'Lỗi server khi đăng ký' });
-        }
+            } catch (error) {
+                console.error('Register error:', error);
+                if (error.message === 'Tên đăng nhập đã tồn tại') {
+                    return res.status(409).json({ error: error.message });
+                }
+                // Kiểm tra lỗi cụ thể từ AuthService (VD: lỗi database)
+                if (error.message.includes('Database connection is not initialized')) {
+                    return res.status(500).json({ error: 'Lỗi kết nối database' });
+                }
+                res.status(500).json({ error: 'Lỗi server khi đăng ký' });
+            }
     }
 
     // Đăng nhập

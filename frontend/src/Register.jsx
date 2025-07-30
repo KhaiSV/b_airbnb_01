@@ -10,6 +10,7 @@ function Register() {
         firstName: '',
         lastName: '',
         dateOfBirth: '',
+        sex: '',
         password: '',
         confirmPassword: ''
     });
@@ -68,7 +69,8 @@ function Register() {
                 firstName: formData.firstName,
                 lastName: formData.lastName,
                 password: formData.password,
-                dateOfBirth: formData.dateOfBirth
+                dateOfBirth: formData.dateOfBirth,
+                sex: formData.sex
             });
 
             if (response.token) {
@@ -165,6 +167,23 @@ function Register() {
                             value={formData.dateOfBirth}
                             onChange={handleChange}
                         />
+                    </div>
+                    
+                    <div className="form-group">
+                        <label htmlFor="sex">Giới tính</label>
+                        <select
+                            id="sex"
+                            name="sex"
+                            value={formData.sex}
+                            onChange={handleChange}
+                            required
+                            disabled={loading}
+                        >
+                            <option value="" disabled hidden>Chọn giới tính</option>
+                            <option value="M">Nam</option>
+                            <option value="F">Nữ</option>
+                            <option value="O">Khác</option>
+                        </select>
                     </div>
 
                     <div className="form-group">
