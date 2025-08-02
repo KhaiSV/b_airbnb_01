@@ -78,9 +78,6 @@ class AuthService {
             // Mã hóa mật khẩu
             const hashedPassword = await AuthService.hashPassword(AC_Password);
 
-            // Lấy ngày hiện tại cho AC_DateCreateAcc
-            const AC_DateCreateAcc = new Date().toISOString().split('T')[0];
-
             // Kiểm tra AC_Sex hợp lệ
             const validSexValues = ['M', 'F', 'O'];
             if (!AC_Sex || !validSexValues.includes(AC_Sex)) {
@@ -88,9 +85,8 @@ class AuthService {
             }
 
             // Câu lệnh gọi stored procedure
-            const query = 'EXEC P_INSERT_ACCOUNT @AC_Username, @AC_Password, @AC_Firstname, @AC_Lastname, @AC_Sex, @AC_DateOfBirth, @AC_Email, @AC_DateCreateAcc';
+            const query = 'EXEC P_INSERT_ACCOUNT @AC_Username, @AC_Password, @AC_Firstname, @AC_Lastname, @AC_Sex, @AC_DateOfBirth, @AC_Email';
 
-            // Chuẩn bị tham số cho procedure (sử dụng hashedPassword)
             const params = [
                 AC_Username,
                 AC_Password,
@@ -98,8 +94,7 @@ class AuthService {
                 AC_Lastname,
                 AC_Sex,
                 AC_DateOfBirth,
-                AC_Email,
-                AC_DateCreateAcc
+                AC_Email
             ];
 
             // Thực thi procedure

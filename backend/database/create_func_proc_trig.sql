@@ -1,9 +1,9 @@
 ﻿USE DB_Airbnb;
 
 -- Function
-GO
 
 -- Procedure
+GO
 CREATE OR ALTER PROCEDURE P_INSERT_ACCOUNT
 	@AC_Username		Varchar(50),
 	@AC_Password		Varchar(255),
@@ -11,8 +11,7 @@ CREATE OR ALTER PROCEDURE P_INSERT_ACCOUNT
 	@AC_Lastname		Nvarchar(50),
 	@AC_Sex				Char,
 	@AC_DateOfBirth		Date,
-	@AC_Email			Varchar(50),
-	@AC_DateCreateAcc	Date
+	@AC_Email			Varchar(50)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -31,11 +30,11 @@ BEGIN
 		AC_Lastname, AC_Sex, AC_DateOfBirth, AC_Email, AC_DateCreateAcc
 	) VALUES (
 		@NewAccountID, @AC_Username, @AC_Password, @AC_Firstname,
-		@AC_Lastname, @AC_Sex, @AC_DateOfBirth, @AC_Email, @AC_DateCreateAcc
+		@AC_Lastname, @AC_Sex, @AC_DateOfBirth, @AC_Email, GETDATE()
 	);
 END;
 
-/*
+GO
 CREATE OR ALTER PROCEDURE P_INSERT_BOOKING
 	@AccountID		CHAR(10),
 	@HomestayID		CHAR(20),
@@ -69,7 +68,8 @@ BEGIN
 		'Pending'
 	);
 END;
-*/
+
+
 
 -- Trigger
 /*
