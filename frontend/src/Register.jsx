@@ -15,6 +15,7 @@ function Register() {
         confirmPassword: ''
     });
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
@@ -55,6 +56,7 @@ function Register() {
         e.preventDefault();
         setLoading(true);
         setError('');
+        setSuccess('');
 
         if (!validateForm()) {
             setLoading(false);
@@ -73,17 +75,14 @@ function Register() {
                 sex: formData.sex
             });
 
-            if (response.token) {
-                // Lưu token và thông tin user
-                localStorage.setItem('token', response.token);
-                localStorage.setItem('user', JSON.stringify({
-                    ...response.user,
-                    isLoggedIn: true
-                }));
+            if (response.message) {
+                // Hiển thị thông báo thành công
+                setSuccess('Đăng ký thành công! Bạn sẽ được chuyển đến trang đăng nhập trong 2 giây...');
                 
-                // Chuyển hướng về trang chủ
-                navigate('/');
-                window.location.reload();
+                // Chuyển hướng về trang đăng nhập sau 2 giây
+                setTimeout(() => {
+                    navigate('/login');
+                }, 2000);
             }
             
         } catch (error) {
@@ -104,6 +103,7 @@ function Register() {
 
                 <form onSubmit={handleSubmit} className="register-form">
                     {error && <div className="error-message">{error}</div>}
+                    {success && <div className="success-message">{success}</div>}
                     
                     <div className="form-row">
                         <div className="form-group">

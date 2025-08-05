@@ -66,15 +66,6 @@ class AuthService {
         } = userData;
 
         try {
-            // Kiểm tra nếu this.db là undefined
-            if (!this.db || typeof this.db.connect !== 'function') {
-                console.error('Database instance:', this.db); // Log để debug
-                throw new Error('Database connection is not initialized');
-            }
-
-            // Kết nối đến database
-            const pool = await this.db.connect();
-
             // Mã hóa mật khẩu
             const hashedPassword = await AuthService.hashPassword(AC_Password);
 
@@ -84,39 +75,114 @@ class AuthService {
                 throw new Error('Giới tính không hợp lệ. Vui lòng chọn M, F hoặc O.');
             }
 
-            // Câu lệnh gọi stored procedure
-            const query = 'EXEC P_INSERT_ACCOUNT @AC_Username, @AC_Password, @AC_Firstname, @AC_Lastname, @AC_Sex, @AC_DateOfBirth, @AC_Email';
+            // Kiểm tra username đã tồn tại chưa
+            const checkQuery = 'SELECT AC_Username FROM Account WHERE AC_Username = @param0';
+            const checkResult = await Database.query(checkQuery, [AC_Username]);
+            
+            if (checkResult.recordset.length > 0) {
+                throw new Error('Tên đăng nhập đã tồn tại');
+            }
 
-            const params = [
+            // Tạo AccountID mới
+            const lastIdQuery = 'SELECT TOP 1 AccountID FROM Account ORDER BY AccountID DESC';
+            const lastIdResult = await Database.query(lastIdQuery, []);
+            
+            let newAccountId;
+            if (lastIdResult.recordset.length > 0) {
+                const lastId = lastIdResult.recordset[0].AccountID;
+                const numPart = parseInt(lastId.substring(2)) + 1;
+                newAccountId = 'AC' + numPart.toString().padStart(8, '0');
+            } else {
+                newAccountId = 'AC00000001';
+            }
+
+            // Insert vào database
+            const insertQuery = `
+                INSERT INTO Account (AccountID, AC_Username, AC_Password, AC_Firstname, AC_Lastname, AC_Sex, AC_DateOfBirth, AC_Email, AC_DateCreateAcc)
+                VALUES (@param0, @param1, @param2, @param3, @param4, @param5, @param6, @param7, GETDATE())
+            `;
+            
+            await Database.query(insertQuery, [
+                newAccountId,
                 AC_Username,
-                AC_Password,
+                hashedPassword,
                 AC_Firstname,
                 AC_Lastname,
                 AC_Sex,
                 AC_DateOfBirth,
                 AC_Email
-            ];
-
-            // Thực thi procedure
-            const result = await this.db.query(query, params);
-
-            // Lấy AccountID (cần sửa procedure để trả về OUTPUT parameter)
-            const newAccountId = null; // Hiện tại không lấy được, cần thêm OUTPUT
+            ]);
 
             // Tạo token
-            const token = AuthService.generateToken({ accountId: newAccountId || 'AC00000001', username: AC_Username });
+            const token = AuthService.generateToken({ 
+                accountId: newAccountId, 
+                username: AC_Username,
+                firstName: AC_Firstname,
+                lastName: AC_Lastname,
+                email: AC_Email
+            });
 
             return {
                 success: true,
                 message: 'Đăng ký thành công',
                 token,
-                accountId: newAccountId || 'AC' + (parseInt(AC_Username.match(/\d+/) || '0') + 1).toString().padStart(8, '0')
+                accountId: newAccountId
             };
         } catch (error) {
-            if (error.number === 2627) { // Lỗi UNIQUE constraint (trùng AC_Username)
+            console.error('Register error:', error);
+            if (error.message === 'Tên đăng nhập đã tồn tại') {
+                throw error;
+            }
+            if (error.number === 2627) { // Lỗi UNIQUE constraint
                 throw new Error('Tên đăng nhập đã tồn tại');
             }
             throw new Error('Đăng ký thất bại: ' + error.message);
+        }
+    }
+
+    static async login(username, password) {
+        try {
+            // Tìm user trong database
+            const query = 'SELECT AccountID, AC_Username, AC_Password, AC_Firstname, AC_Lastname, AC_Email FROM Account WHERE AC_Username = @param0';
+            const result = await Database.query(query, [username]);
+            
+            if (result.recordset.length === 0) {
+                throw new Error('Tên đăng nhập hoặc mật khẩu không đúng');
+            }
+            
+            const user = result.recordset[0];
+            
+            // Kiểm tra mật khẩu
+            const isValidPassword = await AuthService.comparePassword(password, user.AC_Password);
+            
+            if (!isValidPassword) {
+                throw new Error('Tên đăng nhập hoặc mật khẩu không đúng');
+            }
+            
+            // Tạo token
+            const token = AuthService.generateToken({
+                accountId: user.AccountID,
+                username: user.AC_Username,
+                firstName: user.AC_Firstname,
+                lastName: user.AC_Lastname,
+                email: user.AC_Email
+            });
+            
+            return {
+                success: true,
+                message: 'Đăng nhập thành công',
+                token,
+                user: {
+                    id: user.AccountID,
+                    username: user.AC_Username,
+                    firstName: user.AC_Firstname,
+                    lastName: user.AC_Lastname,
+                    email: user.AC_Email
+                }
+            };
+        } catch (error) {
+            console.error('Login error:', error);
+            throw error;
         }
     }
 }
