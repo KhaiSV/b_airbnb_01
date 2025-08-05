@@ -2,24 +2,14 @@ const sql = require('mssql');
 require('dotenv').config();
 
 const config = {
-    // server: process.env.SERVER_NAME || 'localhost\\SQLEXPRESS',
-    // database: 'DB_Airbnb',
-    // user: process.env.DB_USER || 'your_username',
-    // password: process.env.DB_PASSWORD || 'your_password',
-    // options: {
-    //     trustServerCertificate: true,
-    //     trustedConnection: true,
-    //     enableArithAbort: true,
-    //     encrypt: false,
-    //     port: 1433
-    // },
-    server: process.env.SERVER_NAME || 'PLASMAPEA',
-    database: process.env.DB_DATABASE || 'DB_Airbnb',
+    server: 'localhost',
+    database: 'DB_Airbnb',
+    user: 'sa',
+    password: '13012004',
     options: {
         trustServerCertificate: true,
-        trustedConnection: true,
         encrypt: false,
-        port: 1433
+        enableArithAbort: true
     },
     pool: {
         max: 10,
@@ -27,31 +17,30 @@ const config = {
         idleTimeoutMillis: 30000
     }
 };
-console.log('Database config:', config);
 
-class Database {
-    constructor() {
-        this.pool = null;
-    }
+let pool = null;
 
+const database = {
     async connect() {
         try {
-            this.pool = await sql.connect(config);
-            console.log('✅ Connected to SQL Server');
-            return this.pool;
+            if (!pool) {
+                pool = await sql.connect(config);
+                console.log('✅ Connected to SQL Server successfully');
+            }
+            return pool;
         } catch (err) {
             console.error('❌ Database connection failed:', err);
             throw err;
         }
-    }
+    },
 
     async query(queryString, params = []) {
         try {
-            if (!this.pool) {
+            if (!pool) {
                 await this.connect();
             }
             
-            const request = this.pool.request();
+            const request = pool.request();
             
             params.forEach((param, index) => {
                 request.input(`param${index}`, param);
@@ -63,13 +52,14 @@ class Database {
             console.error('Query error:', err);
             throw err;
         }
-    }
+    },
 
     async close() {
-        if (this.pool) {
-            await this.pool.close();
+        if (pool) {
+            await pool.close();
+            pool = null;
         }
     }
-}
+};
 
-module.exports = new Database();
+module.exports = database;

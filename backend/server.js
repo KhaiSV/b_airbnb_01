@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-// const database = require('./config/database');
+const database = require('./config/database');
 require('dotenv').config();
 
 const app = express();
@@ -37,13 +37,13 @@ app.use('*', (req, res) => {
 // Start server
 async function startServer() {
     try {
-        // Connect to database - tạm thời comment out
-        // await database.connect();
+        // Connect to database
+        await database.connect();
         
         app.listen(PORT, () => {
             console.log(`🚀 Server running on http://localhost:${PORT}`);
             console.log(`📊 Health check: http://localhost:${PORT}/health`);
-            console.log(`⚠️  Database connection disabled temporarily`);
+            console.log(`✅ Database connected successfully`);
         });
     } catch (error) {
         console.error('❌ Failed to start server:', error);
@@ -54,13 +54,13 @@ async function startServer() {
 // Graceful shutdown
 process.on('SIGTERM', async () => {
     console.log('SIGTERM received, shutting down gracefully');
-    // await database.close();
+    await database.close();
     process.exit(0);
 });
 
 process.on('SIGINT', async () => {
     console.log('SIGINT received, shutting down gracefully');
-    // await database.close();
+    await database.close();
     process.exit(0);
 });
 

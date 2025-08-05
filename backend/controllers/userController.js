@@ -1,8 +1,8 @@
 // const database = require('../config/database');
 const AuthService = require('../services/authService');
 
-// Temporary in-memory user storage (chỉ để test)
-let users = [];
+// Temporary in-memory user storage (chỉ để test) - SẼ KHÔNG DÙNG NỮA
+// let users = [];
 
 class UserController {
     // Đăng ký user mới
@@ -85,50 +85,20 @@ class UserController {
                 });
             }
 
-            // Tìm user trong memory (tạm thời)
-            const user = users.find(u => u.username === username);
-
-            if (!user) {
-                return res.status(401).json({ 
-                    error: 'Tên đăng nhập hoặc mật khẩu không đúng' 
-                });
-            }
-
-            // Kiểm tra mật khẩu
-            const isValidPassword = await AuthService.comparePassword(
-                password, 
-                user.password
-            );
-
-            if (!isValidPassword) {
-                return res.status(401).json({ 
-                    error: 'Tên đăng nhập hoặc mật khẩu không đúng' 
-                });
-            }
-
-            // Tạo token
-            const token = AuthService.generateToken({
-                id: user.id,
-                username: user.username,
-                email: user.email,
-                firstName: user.firstName,
-                lastName: user.lastName
-            });
+            // Gọi AuthService để đăng nhập
+            const result = await AuthService.login(username, password);
 
             res.json({
-                message: 'Đăng nhập thành công',
-                token,
-                user: {
-                    id: user.id,
-                    username: user.username,
-                    email: user.email,
-                    firstName: user.firstName,
-                    lastName: user.lastName
-                }
+                message: result.message,
+                token: result.token,
+                user: result.user
             });
 
         } catch (error) {
             console.error('Login error:', error);
+            if (error.message === 'Tên đăng nhập hoặc mật khẩu không đúng') {
+                return res.status(401).json({ error: error.message });
+            }
             res.status(500).json({ error: 'Lỗi server khi đăng nhập' });
         }
     }
@@ -137,22 +107,26 @@ class UserController {
     static async getProfile(req, res) {
         try {
             const { username } = req.user;
+            const Database = require('../config/database');
 
-            // Tìm user trong memory (tạm thời)
-            const user = users.find(u => u.username === username);
+            // Tìm user trong database
+            const query = 'SELECT AccountID, AC_Username, AC_Firstname, AC_Lastname, AC_Email, AC_DateOfBirth FROM Account WHERE AC_Username = @param0';
+            const result = await Database.query(query, [username]);
 
-            if (!user) {
+            if (result.recordset.length === 0) {
                 return res.status(404).json({ error: 'User không tìm thấy' });
             }
 
+            const user = result.recordset[0];
+
             res.json({
                 user: {
-                    id: user.id,
-                    username: user.username,
-                    email: user.email,
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    dateOfBirth: user.dateOfBirth
+                    id: user.AccountID,
+                    username: user.AC_Username,
+                    firstName: user.AC_Firstname,
+                    lastName: user.AC_Lastname,
+                    email: user.AC_Email,
+                    dateOfBirth: user.AC_DateOfBirth
                 }
             });
 
@@ -167,6 +141,7 @@ class UserController {
         try {
             const { currentPassword, newPassword } = req.body;
             const { username } = req.user;
+            const Database = require('../config/database');
 
             if (!currentPassword || !newPassword) {
                 return res.status(400).json({ 
@@ -180,17 +155,20 @@ class UserController {
                 });
             }
 
-            // Tìm user trong memory
-            const user = users.find(u => u.username === username);
+            // Tìm user trong database
+            const getUserQuery = 'SELECT AC_Password FROM Account WHERE AC_Username = @param0';
+            const userResult = await Database.query(getUserQuery, [username]);
 
-            if (!user) {
+            if (userResult.recordset.length === 0) {
                 return res.status(404).json({ error: 'User không tìm thấy' });
             }
+
+            const user = userResult.recordset[0];
 
             // Kiểm tra mật khẩu hiện tại
             const isValidPassword = await AuthService.comparePassword(
                 currentPassword, 
-                user.password
+                user.AC_Password
             );
 
             if (!isValidPassword) {
@@ -202,8 +180,9 @@ class UserController {
             // Mã hóa mật khẩu mới
             const hashedNewPassword = await AuthService.hashPassword(newPassword);
 
-            // Cập nhật mật khẩu trong memory
-            user.password = hashedNewPassword;
+            // Cập nhật mật khẩu trong database
+            const updateQuery = 'UPDATE Account SET AC_Password = @param0 WHERE AC_Username = @param1';
+            await Database.query(updateQuery, [hashedNewPassword, username]);
 
             res.json({
                 message: 'Đổi mật khẩu thành công'
