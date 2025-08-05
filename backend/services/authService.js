@@ -8,7 +8,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 class AuthService {
     constructor() {
         this.db = Database;
-        // console.log('AuthService initialized with db:', this.db);
+        console.log('AuthService initialized with db:', this.db);
     }
 
     // Mã hóa mật khẩu

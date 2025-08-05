@@ -8,10 +8,10 @@ class UserController {
     // Đăng ký user mới
     static async register(req, res) {
         try {
-            const { AC_Username, AC_Email, AC_Firstname, AC_Lastname, AC_Password, AC_DateOfBirth, AC_Sex } = req.body;
+            const { AC_Username, AC_Password, AC_Firstname, AC_Lastname, AC_DateOfBirth, AC_Sex, AC_Email } = req.body;
 
             // Validate input
-            if (!AC_Username || !AC_Email || !AC_Firstname || !AC_Lastname || !AC_Password || !AC_DateOfBirth) {
+            if (!AC_Username || !AC_Password || !AC_Firstname || !AC_Lastname || !AC_DateOfBirth || !AC_Sex || !AC_Email) {
                 return res.status(400).json({ 
                     error: 'Vui lòng điền đầy đủ thông tin bắt buộc' 
                 });
