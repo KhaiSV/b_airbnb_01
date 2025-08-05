@@ -27,10 +27,10 @@ BEGIN
 
 	INSERT INTO ACCOUNT (
 		AccountID, AC_Username, AC_Password, AC_Firstname,
-		AC_Lastname, AC_Sex, AC_DateOfBirth, AC_Email, AC_DateCreateAcc
+		AC_Lastname, AC_Sex, AC_DateOfBirth, AC_Email, AC_DateCreateAcc, AC_Status
 	) VALUES (
 		@NewAccountID, @AC_Username, @AC_Password, @AC_Firstname,
-		@AC_Lastname, @AC_Sex, @AC_DateOfBirth, @AC_Email, GETDATE()
+		@AC_Lastname, @AC_Sex, @AC_DateOfBirth, @AC_Email, GETDATE(), 'Normal'
 	);
 END;
 

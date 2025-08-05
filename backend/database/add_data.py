@@ -28,7 +28,7 @@ def pad(num, width):
     return str(num).zfill(width)
 
 def generate_booking_id(i):
-    return f'BK{pad(i, 18)}'
+    return f'BK{pad(i, 28)}'
 
 def generate_account_id():
     return f'AC{pad(random.randint(1, 50), 8)}'
@@ -119,9 +119,10 @@ def import_homestay_data(csv_file="homestay_data.csv"):
             try:
                 cursor.execute("""
                     INSERT INTO HOMESTAY (
-                        HomestayID, HS_ShortName, HS_LongName, HS_BasePrice,
-                        HS_CurrentPrice, HS_NumOfDays, HS_AvgRating, HS_NumOfReview, HS_ListOfImage
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        HomestayID, HS_ShortName, HS_LongName, HS_BasePrice, HS_CurrentPrice,
+                        HS_NumOfDays, HS_AvgRating, HS_NumOfReview, HS_ListOfImage,
+                        HS_Status, HS_AllowPets
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, 
                     row['HomestayID'],
                     row['Short Name'], 
@@ -131,7 +132,9 @@ def import_homestay_data(csv_file="homestay_data.csv"):
                     row['Number of Days'], 
                     row['Average Rating'], 
                     row['Number of Reviews'], 
-                    row['List of Images']
+                    row['List of Images'],
+                    "Normal",           # Hoặc row['HS_Status'] nếu có
+                    False               # Đây là giá trị cho HS_AllowPets
                 )
                 success_count += 1
             except Exception as e:
@@ -184,8 +187,9 @@ def import_account_data(csv_file="account_data.csv"):
                 cursor.execute("""
                     INSERT INTO ACCOUNT (
                         AccountID, AC_Username, AC_Password, AC_Firstname, 
-                        AC_Lastname, AC_Sex, AC_DateOfBirth, AC_Email, AC_DateCreateAcc
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        AC_Lastname, AC_Sex, AC_DateOfBirth, AC_Email, AC_DateCreateAcc,
+                        AC_Status
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, 
                     row['AccountID'],
                     row['AC_Username'],
@@ -195,7 +199,8 @@ def import_account_data(csv_file="account_data.csv"):
                     row['AC_Sex'],
                     date_of_birth,
                     row['AC_Email'],
-                    date_create_acc
+                    date_create_acc,
+                    "Normal",
                 )
                 success_count += 1
             except Exception as e:
@@ -228,9 +233,9 @@ def insert_booking_data(n=200):
             cursor.execute("""
                 INSERT INTO BOOKING (
                     BookingID, AccountID, HomestayID,
-                    B_DateStart, B_DateEnd, B_DateBook,
-                    B_Adults, B_Children, B_Infants, B_Pets,
-                    B_Status
+                    BK_DateStart, BK_DateEnd, BK_DateBook,
+                    BK_Adults, BK_Children, BK_Infants, BK_Pets,
+                    BK_Status
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, row)
 

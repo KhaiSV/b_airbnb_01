@@ -2,24 +2,44 @@ const Database = require('../config/database');
 console.log('Imported Database:', Database);
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 class AuthService {
     constructor() {
         this.db = Database;
-        console.log('AuthService initialized with db:', this.db);
+        // console.log('AuthService initialized with db:', this.db);
     }
 
     // Mã hóa mật khẩu
-    static async hashPassword(password) {
-        const salt = await bcrypt.genSalt(10);
-        return await bcrypt.hash(password, salt);
+    // static async hashPassword(password) {
+    //     const salt = await bcrypt.genSalt(10);
+    //     return await bcrypt.hash(password, salt);
+    // }
+    // So sánh mật khẩu
+    // static async comparePassword(password, hashedPassword) {
+    //     return await bcrypt.compare(password, hashedPassword);
+    // }
+    // SHA-256 hash function
+    static sha256(text) {
+        return crypto.createHash('sha256')
+                     .update(text, 'utf8')
+                     .digest('hex')
+                     .toUpperCase();
     }
 
-    // So sánh mật khẩu
-    static async comparePassword(password, hashedPassword) {
-        return await bcrypt.compare(password, hashedPassword);
+    // Mã hóa theo quy tắc: Hash(Hash(pw) + Hash(pw))
+    static async hashPassword(password) {
+        const h1 = this.sha256(password);
+        const combined = h1 + h1; // ghép chuỗi hash
+        return this.sha256(combined);
+    }
+
+    // So sánh password thường với hashed password
+    static async comparePassword(inputPassword, hashedPassword) {
+        const hashAttempt = await this.hashPassword(inputPassword);
+        return hashAttempt === hashedPassword;
     }
 
     // Tạo JWT token
