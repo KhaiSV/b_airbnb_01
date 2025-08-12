@@ -55,3 +55,9 @@
   color: #000;
   margin-top: 6px;
 }
+
+.card__link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}

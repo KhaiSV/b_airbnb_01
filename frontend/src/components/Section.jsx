@@ -9,11 +9,13 @@ function Section({ title, cards }) {
       <div className="section__cards">
         {cards?.map((item, index) => (
           <Card
-            key={index}
+            key={item.id}
+            id={item.id} // 👉 THÊM DÒNG NÀY
             src={item.src}
             title={item.title}
             description={item.description}
             price={item.price}
+            label={item.label} // 👈 THÊM label nếu bạn có
           />
         ))}
       </div>

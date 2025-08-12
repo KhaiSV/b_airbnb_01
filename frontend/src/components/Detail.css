@@ -1,0 +1,230 @@
+.detail {
+  padding: 4rem 6vw;
+  max-width: 100%;
+  margin: auto;
+  font-family: 'Arial', sans-serif;
+  color: #222;
+  line-height: 1.8;
+}
+
+.detail__title {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+/* BỐ CỤC 2 CỘT */
+.detail__container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2rem;
+}
+
+.detail__left {
+  flex: 2.2;
+}
+
+.detail__right {
+  flex: 0.8;
+  position: sticky;
+  top: 100px;
+}
+
+/* BOX ĐẶT PHÒNG */
+.booking-box {
+  padding: 1.5rem;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  background-color: #fff;
+}
+
+.booking-box h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+}
+
+.booking-box__dates {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.booking-box__dates input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.booking-box__guests select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 1.2rem;
+}
+
+.booking-box__button {
+  width: 100%;
+  background: linear-gradient(to right, #ff385c, #e61e4d);
+  color: #fff;
+  padding: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* HÌNH ẢNH */
+.detail__images-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.detail__images {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.detail__image-main {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  border-radius: 16px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.detail__image-thumbnails {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+}
+
+.thumbnail-wrapper {
+  flex: 1;
+}
+
+.thumbnail-wrapper img {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.thumbnail-wrapper img:hover {
+  transform: scale(1.05);
+}
+
+/* THÔNG TIN PHÒNG */
+.detail__info {
+  margin-top: 4rem;
+  font-size: 1.25rem;
+  width: 100%;
+}
+
+.detail__price {
+  font-size: 1.75rem;
+  font-weight: bold;
+  color: #ff385c;
+}
+
+.detail__label {
+  margin-top: 1rem;
+  font-style: italic;
+  color: #555;
+}
+
+.detail__host {
+  margin-top: 2rem;
+  padding: 2rem;
+  background: #f7f7f7;
+  border-left: 6px solid #ff385c;
+  border-radius: 12px;
+  font-size: 1.1rem;
+}
+
+.detail__features {
+  list-style: none;
+  padding: 0;
+  margin-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+.detail__features li {
+  background-color: #f0f0f0;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  font-weight: 500;
+  color: #333;
+  font-size: 1.05rem;
+}
+
+.detail__book-btn {
+  display: inline-block;
+  margin-top: 3rem;
+  padding: 1.25rem 3rem;
+  background-color: #ff385c;
+  color: white;
+  border: none;
+  font-size: 1.25rem;
+  font-weight: bold;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.detail__book-btn:hover {
+  background-color: #e12d50;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .detail__container {
+    flex-direction: column;
+  }
+
+  .detail__left, .detail__right {
+    width: 100%;
+  }
+
+  .thumbnail-wrapper img {
+    height: 150px;
+  }
+}
+
+@media (max-width: 768px) {
+  .detail__title {
+    font-size: 2rem;
+  }
+
+  .thumbnail-wrapper img {
+    height: 120px;
+  }
+
+  .detail__features {
+    flex-direction: column;
+  }
+
+  .detail__book-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .detail__title {
+    font-size: 1.5rem;
+  }
+
+  .thumbnail-wrapper img {
+    height: 100px;
+  }
+}
