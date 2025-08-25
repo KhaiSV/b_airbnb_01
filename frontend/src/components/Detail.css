@@ -1,3 +1,4 @@
+/* ========== PAGE ========== */
 .detail {
   padding: 4rem 6vw;
   max-width: 100%;
@@ -7,14 +8,70 @@
   line-height: 1.8;
 }
 
+/* Header: Tiêu đề trái, nút Lưu phải */
+.detail__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 2rem;
+}
+
 .detail__title {
   font-size: 3rem;
   font-weight: bold;
-  margin-bottom: 2rem;
-  text-align: center;
+  margin: 0;           /* bỏ margin dưới, để header quyết định khoảng cách */
+  line-height: 1.2;
 }
 
-/* BỐ CỤC 2 CỘT */
+/* ========== SAVE BUTTON ========== */
+.save-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  border: 2px solid rgba(0,0,0,0.15);
+  padding: 12px 20px;              /* tăng padding */
+  border-radius: 999px;
+  cursor: pointer;
+  color: #ff385c;
+  font-weight: 700;
+  font-size: 1.1rem;               /* chữ lớn hơn */
+  transition: background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+  user-select: none;
+}
+.save-btn:hover {
+  background: rgba(255,56,92,0.06);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+
+.save-btn:active {
+  transform: translateY(0.5px);
+}
+
+.save-btn:focus-visible {
+  outline: 2px solid #ff385c;
+  outline-offset: 2px;
+}
+
+.save-btn__icon {
+  width: 28px;                     
+  height: 28px;
+}
+
+
+.save-btn__text {
+  text-decoration: underline;
+  font-size: 1.05rem;             
+}
+
+.save-btn.is-saved {
+  background: rgba(255,56,92,0.12);
+  border-color: rgba(255,56,92,0.5);
+  color: #ff385c;
+}
+
+/* ========== 2-COLUMN LAYOUT ========== */
 .detail__container {
   display: flex;
   justify-content: center;
@@ -24,6 +81,7 @@
 
 .detail__left {
   flex: 2.2;
+  min-width: 0; /* tránh overflow ảnh */
 }
 
 .detail__right {
@@ -32,10 +90,10 @@
   top: 100px;
 }
 
-/* BOX ĐẶT PHÒNG */
+/* ========== BOOKING BOX ========== */
 .booking-box {
   padding: 1.5rem;
-  border: 1px solid #ccc;
+  border: 1px solid #e6e6e6;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   background-color: #fff;
@@ -78,7 +136,7 @@
   cursor: pointer;
 }
 
-/* HÌNH ẢNH */
+/* ========== IMAGES ========== */
 .detail__images-wrapper {
   display: flex;
   justify-content: center;
@@ -115,78 +173,79 @@
   object-fit: cover;
   border-radius: 10px;
   cursor: pointer;
-  transition: transform 0.3s ease;
+  transition: transform 0.25s ease;
+  will-change: transform;
 }
 
 .thumbnail-wrapper img:hover {
-  transform: scale(1.05);
+  transform: scale(1.03);
 }
 
-/* THÔNG TIN PHÒNG */
+/* ========== INFO ========== */
 .detail__info {
-  margin-top: 4rem;
-  font-size: 1.25rem;
+  margin-top: 2.5rem;
+  font-size: 1.125rem;
   width: 100%;
 }
 
 .detail__price {
-  font-size: 1.75rem;
+  font-size: 1.5rem;
   font-weight: bold;
   color: #ff385c;
 }
 
 .detail__label {
-  margin-top: 1rem;
+  margin-top: 0.75rem;
   font-style: italic;
   color: #555;
 }
 
 .detail__host {
-  margin-top: 2rem;
-  padding: 2rem;
+  margin-top: 1.5rem;
+  padding: 1.25rem 1.5rem;
   background: #f7f7f7;
   border-left: 6px solid #ff385c;
   border-radius: 12px;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
 }
 
 .detail__features {
   list-style: none;
   padding: 0;
-  margin-top: 2rem;
+  margin-top: 1.5rem;
   display: flex;
   flex-wrap: wrap;
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
 .detail__features li {
   background-color: #f0f0f0;
-  padding: 1rem 1.5rem;
+  padding: 0.85rem 1.25rem;
   border-radius: 10px;
   font-weight: 500;
   color: #333;
-  font-size: 1.05rem;
+  font-size: 1rem;
 }
 
 .detail__book-btn {
   display: inline-block;
-  margin-top: 3rem;
-  padding: 1.25rem 3rem;
+  margin-top: 2rem;
+  padding: 1rem 2rem;
   background-color: #ff385c;
   color: white;
   border: none;
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   font-weight: bold;
   border-radius: 14px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.25s ease;
 }
 
 .detail__book-btn:hover {
   background-color: #e12d50;
 }
 
-/* RESPONSIVE */
+/* ========== RESPONSIVE ========== */
 @media (max-width: 1024px) {
   .detail__container {
     flex-direction: column;
@@ -197,7 +256,11 @@
   }
 
   .thumbnail-wrapper img {
-    height: 150px;
+    height: 180px;
+  }
+
+  .detail__title {
+    font-size: 2.4rem;
   }
 }
 
@@ -207,7 +270,7 @@
   }
 
   .thumbnail-wrapper img {
-    height: 120px;
+    height: 140px;
   }
 
   .detail__features {
@@ -217,14 +280,21 @@
   .detail__book-btn {
     width: 100%;
   }
+
+  /* Nút lưu xuống dòng dưới tiêu đề khi màn hình hẹp */
+  .detail__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
 }
 
 @media (max-width: 480px) {
   .detail__title {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
   }
 
   .thumbnail-wrapper img {
-    height: 100px;
+    height: 120px;
   }
 }
