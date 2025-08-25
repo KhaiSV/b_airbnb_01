@@ -2,10 +2,10 @@ const sql = require('mssql');
 require('dotenv').config();
 
 const config = {
-    server: 'localhost',
-    database: 'DB_Airbnb',
-    user: 'sa',
-    password: '13012004',
+    server: process.env.SERVER_NAME,
+    database: process.env.DB_DATABASE,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
     options: {
         trustServerCertificate: true,
         encrypt: false,
