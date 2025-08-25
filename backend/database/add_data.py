@@ -36,6 +36,9 @@ def generate_account_id():
 def generate_homestay_id():
     return f'HS{pad(random.randint(1, 100), 18)}'
 
+def generate_review_id(i):
+    return f'RV{pad(i, 18)}'
+
 def random_date(start, end):
     """Generate random date between start and end"""
     delta = end - start
@@ -52,18 +55,18 @@ def generate_booking_row(i):
     stay_length = random.randint(1, 5)
     date_end = date_start + timedelta(days=stay_length)
 
-    adults = random.randint(1, 4)
-    children = random.randint(0, 3)
-    infants = random.randint(0, 1)
+    adults = random.randint(1, 2)
+    children = random.randint(0, 2)
+    infants = random.randint(0, 2)
     pets = 0
 
-    # Chọn status dựa trên ngày hiện tại
-    if date_book <= today < date_start:
-        status = random.choice(['Pending', 'Paid', 'Canceled'])
+    # Tăng tỉ lệ CheckedOut thành công
+    if today > date_end:
+        status = random.choices(['CheckedOut', 'Canceled', 'NoShow'], weights=[0.8, 0.1, 0.1])[0]
     elif date_start <= today <= date_end:
-        status = random.choice(['CheckedIn', 'Canceled', 'NoShow'])
-    elif today > date_end:
-        status = random.choice(['CheckedOut', 'Canceled', 'NoShow'])
+        status = random.choices(['CheckedIn', 'Canceled', 'NoShow'], weights=[0.7, 0.2, 0.1])[0]
+    elif date_book <= today < date_start:
+        status = random.choices(['Paid', 'Pending', 'Canceled'], weights=[0.6, 0.3, 0.1])[0]
     else:
         status = 'Pending'
 
@@ -93,28 +96,23 @@ def import_host_data(csv_file="host_data.csv"):
         
         print(f"Đã đọc {len(df)} bản ghi host")
         
-        # Kết nối database
         conn = connect_to_database()
         if not conn:
             return False
         
         cursor = conn.cursor()
         
-        # Xóa dữ liệu cũ (tùy chọn)
         cursor.execute("DELETE FROM HOMESTAY WHERE HostID IN (SELECT HostID FROM HOST)")
         cursor.execute("DELETE FROM HOST")
         
         success_count = 0
         error_count = 0
         
-        # Tạo HostID nếu chưa có
         if 'HostID' not in df.columns:
             df['HostID'] = ['HO' + str(i+1).zfill(8) for i in range(len(df))]
         
-        # Duyệt từng dòng và thêm vào bảng HOST
         for index, row in df.iterrows():
             try:
-                # Xử lý dữ liệu ngày tháng
                 date_of_birth = pd.to_datetime(row['HO_DateOfBirth']).date() if pd.notna(row['HO_DateOfBirth']) else None
                 date_create_acc = pd.to_datetime(row['HO_DateCreateAcc']).date() if pd.notna(row['HO_DateCreateAcc']) else None
                 
@@ -144,7 +142,6 @@ def import_host_data(csv_file="host_data.csv"):
                 print(f"Lỗi tại dòng {index + 1}: {e}")
                 error_count += 1
         
-        # Lưu thay đổi và đóng kết nối
         conn.commit()
         conn.close()
         
@@ -165,15 +162,12 @@ def import_homestay_data(csv_file="homestay_data.csv"):
         print(f"Đang đọc dữ liệu từ {csv_file}...")
         df = pd.read_csv(csv_file)
         
-        # Xử lý dữ liệu
         if 'Link' in df.columns:
             df = df.drop(columns=['Link'])
         
-        # Tạo HomestayID nếu chưa có
         if 'HomestayID' not in df.columns:
             df['HomestayID'] = ['HS' + str(i+1).zfill(18) for i in range(len(df))]
         
-        # Kết nối database để lấy danh sách HostID
         conn = connect_to_database()
         if not conn:
             return False
@@ -187,25 +181,19 @@ def import_homestay_data(csv_file="homestay_data.csv"):
             print("Không tìm thấy HostID trong bảng HOST. Vui lòng import dữ liệu HOST trước.")
             return False
         
-        # Gán HostID ngẫu nhiên cho mỗi homestay
         df['HostID'] = [random.choice(host_ids) for _ in range(len(df))]
         
         print(f"Đã đọc {len(df)} bản ghi homestay")
         
-        # Kết nối lại database để chèn dữ liệu
         conn = connect_to_database()
         if not conn:
             return False
         
         cursor = conn.cursor()
         
-        # Xóa dữ liệu cũ (tùy chọn)
-        # cursor.execute("DELETE FROM HOMESTAY")
-        
         success_count = 0
         error_count = 0
         
-        # Duyệt từng dòng và thêm vào bảng HOMESTAY
         for index, row in df.iterrows():
             try:
                 cursor.execute("""
@@ -213,9 +201,9 @@ def import_homestay_data(csv_file="homestay_data.csv"):
                         HomestayID, HS_ShortName, HS_LongName, HS_Address,
                         HS_BasePrice, HS_CurrentPrice, HS_NumOfDays, HS_AvgRating,
                         HS_NumOfReview, HS_ListOfImage, HS_Room, HS_Description,
-                        HS_Amenity, HS_Status, HS_AllowPets, HostID
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """, 
+                        HS_Amenity, HS_Status, HS_Adults, HS_Children, HS_Infants, HS_Pets, HostID
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (
                     row['HomestayID'],
                     row['Short Name'], 
                     row['Long Name'], 
@@ -230,15 +218,17 @@ def import_homestay_data(csv_file="homestay_data.csv"):
                     row['Description'],
                     row['Amenity'],
                     "Normal",
-                    False,
+                    2,  # HS_Adults
+                    2,  # HS_Children
+                    2,  # HS_Infants
+                    0,  # HS_Pets
                     row['HostID']
-                )
+                ))
                 success_count += 1
             except Exception as e:
                 print(f"Lỗi tại dòng {index + 1}: {e}")
                 error_count += 1
         
-        # Lưu thay đổi và đóng kết nối
         conn.commit()
         conn.close()
         
@@ -261,20 +251,16 @@ def import_account_data(csv_file="account_data.csv"):
         
         print(f"Đã đọc {len(df)} bản ghi account")
         
-        # Kết nối database
         conn = connect_to_database()
         if not conn:
             return False
         
         cursor = conn.cursor()
         
-        # Xóa dữ liệu cũ (tùy chọn)
-        # cursor.execute("DELETE FROM ACCOUNT")
-        
         success_count = 0
         error_count = 0
         
-        # Duyệt từng dòng và thêm vào bảng ACCOUNT
+        
         for index, row in df.iterrows():
             try:
                 # Xử lý dữ liệu ngày tháng
@@ -305,7 +291,6 @@ def import_account_data(csv_file="account_data.csv"):
                 print(f"Lỗi tại dòng {index + 1}: {e}")
                 error_count += 1
         
-        # Lưu thay đổi và đóng kết nối
         conn.commit()
         conn.close()
         
@@ -318,12 +303,10 @@ def import_account_data(csv_file="account_data.csv"):
 
 def insert_booking_data(n=200):
     try:
-        conn = pyodbc.connect(
-            "Driver={ODBC Driver 17 for SQL Server};"
-            "Server=localhost;"
-            "Database=DB_Airbnb;"
-            "Trusted_Connection=yes;"
-        )
+        conn = connect_to_database()
+        if not conn:
+            return False
+        
         cursor = conn.cursor()
 
         for i in range(1, n+1):
@@ -340,12 +323,155 @@ def insert_booking_data(n=200):
         conn.commit()
         print(f"Đã chèn {n} dòng BOOKING thành công.")
         conn.close()
+        return True
 
     except Exception as e:
-        print("❌ Lỗi:", e)
+        print(f"❌ Lỗi insert booking: {e}")
+        return False
+
+def insert_review_data(n=200):
+    try:
+        conn = connect_to_database()
+        if not conn:
+            return False
+        
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            SELECT BookingID, AccountID, HomestayID, BK_DateEnd
+            FROM BOOKING
+            WHERE BK_Status = 'CheckedOut'
+        """)
+        checked_out_bookings = cursor.fetchall()
+        
+        success_count = 0
+        error_count = 0
+        review_id_counter = 1
+        
+        for booking in checked_out_bookings:
+            try:
+                booking_id = booking.BookingID
+                account_id = booking.AccountID
+                homestay_id = booking.HomestayID
+                date_end = booking.BK_DateEnd
+                
+                review_time = date_end + timedelta(days=random.randint(1, 2))
+                
+                rating = random.choices([3, 4, 5], weights=[0.2, 0.4, 0.4])[0]
+                
+                review_text = f"Review for booking {booking_id}: Great stay!"
+                
+                review_id = generate_review_id(review_id_counter)
+                review_id_counter += 1
+                
+                cursor.execute("""
+                    INSERT INTO REVIEW (
+                        ReviewID, AccountID, HomestayID,
+                        RV_Rating, RV_ReviewText, RV_TimeCreateRv
+                    ) VALUES (?, ?, ?, ?, ?, ?)
+                """, 
+                    review_id,
+                    account_id,
+                    homestay_id,
+                    rating,
+                    review_text,
+                    review_time
+                )
+                success_count += 1
+            except Exception as e:
+                print(f"Lỗi khi chèn review cho booking {booking.BookingID}: {e}")
+                error_count += 1
+        
+        conn.commit()
+        conn.close()
+        
+        print(f"Đã chèn {success_count} review thành công, {error_count} lỗi")
+        return True
+        
+    except Exception as e:
+        print(f"Lỗi insert review: {e}")
+        return False
+
+def update_homestay_rating():
+    """Chạy stored procedure P_UpdateHomestayRating"""
+    try:
+        conn = connect_to_database()
+        if not conn:
+            return False
+        
+        cursor = conn.cursor()
+        cursor.execute("EXEC DB_Airbnb.dbo.P_UpdateHomestayRating")
+        conn.commit()
+        print("Đã chạy stored procedure P_UpdateHomestayRating thành công.")
+        conn.close()
+        return True
+    
+    except Exception as e:
+        print(f"Lỗi khi chạy P_UpdateHomestayRating: {e}")
+        return False
+
+def check_homestay_rating():
+    """Kiểm tra xem HS_AvgRating có được cập nhật không"""
+    try:
+        conn = connect_to_database()
+        if not conn:
+            return False
+        
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT COUNT(*) AS NonZeroRatings
+            FROM HOMESTAY
+            WHERE HS_AvgRating > 0
+        """)
+        result = cursor.fetchone()
+        conn.close()
+        
+        non_zero_count = result[0]
+        if non_zero_count > 0:
+            print(f"Tìm thấy {non_zero_count} homestay có HS_AvgRating > 0")
+            return True
+        else:
+            print("Không có homestay nào có HS_AvgRating > 0. Kiểm tra bảng REVIEW.")
+            return False
+    
+    except Exception as e:
+        print(f"Lỗi khi kiểm tra HS_AvgRating: {e}")
+        return False
+
+def check_job_status():
+    """Kiểm tra trạng thái job UpdateHomestayRatingJob"""
+    try:
+        conn = connect_to_database()
+        if not conn:
+            return False
+        
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT 
+                j.name AS job_name,
+                j.enabled,
+                s.name AS schedule_name
+            FROM msdb.dbo.sysjobs j
+            LEFT JOIN msdb.dbo.sysjobschedules jsch ON j.job_id = jsch.job_id
+            LEFT JOIN msdb.dbo.sysschedules s ON jsch.schedule_id = s.schedule_id
+            WHERE j.name = 'UpdateHomestayRatingJob'
+        """)
+        job = cursor.fetchone()
+        conn.close()
+        
+        if job:
+            print(f"Job {job[0]} trạng thái: {'Enabled' if job[1] == 1 else 'Disabled'}, Lịch: {job[2]}")
+            return job[1] == 1
+        else:
+            print("Không tìm thấy job UpdateHomestayRatingJob")
+            return False
+    
+    except Exception as e:
+        print(f"Lỗi khi kiểm tra job: {e}")
+        return False
 
 def main():
-    print("\n--- Import cả HOST, HOMESTAY và ACCOUNT ---")
+    print("\n--- Import cả HOST, HOMESTAY, ACCOUNT, BOOKING, REVIEW và kiểm tra ---")
     print("Bắt đầu import host...")
     host_success = import_host_data()
     
@@ -356,12 +482,24 @@ def main():
     account_success = import_account_data()
 
     print("\nBắt đầu generate booking...")
-    insert_booking_data(200)
+    booking_success = insert_booking_data(200)
     
-    if host_success and homestay_success and account_success:
-        print("\nImport tất cả dữ liệu thành công!")
+    print("\nBắt đầu generate review...")
+    review_success = insert_review_data()
+    
+    print("\nBắt đầu cập nhật HS_AvgRating...")
+    rating_success = update_homestay_rating()
+
+    print("\nKiểm tra trạng thái job...")
+    job_success = check_job_status()
+
+    print("\nKiểm tra HS_AvgRating...")
+    rating_updated = check_homestay_rating()
+
+    if host_success and homestay_success and account_success and booking_success and review_success and rating_success and job_success and rating_updated:
+        print("\nImport, cập nhật và kiểm tra tất cả thành công!")
     else:
-        print("\nCó lỗi xảy ra trong quá trình import!")
+        print("\nCó lỗi xảy ra trong quá trình import, cập nhật hoặc kiểm tra!")
 
 if __name__ == "__main__":
     main()
