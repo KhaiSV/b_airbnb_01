@@ -28,7 +28,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/change-password" element={<ChangePassword />} />
-        <Route path="/details/:id" element={<Detail />} />
+        <Route path="/homestays/:id" element={<Detail />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/users" element={<UserManagement />} />
         <Route path="/admin/hosts" element={<HostManagement />} />
