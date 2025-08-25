@@ -1,0 +1,5 @@
+[
+  { "id": 1, "username": "admin", "email": "admin@email.com", "role": "admin", "status": "Hoạt động" },
+  { "id": 2, "username": "user1", "email": "user1@email.com", "role": "user", "status": "Hoạt động" },
+  { "id": 3, "username": "user2", "email": "user2@email.com", "role": "user", "status": "Bị chặn" }
+]

@@ -1,4 +1,4 @@
-﻿/*
+﻿
 -- Xóa database cũ
 USE master;
 GO
@@ -6,7 +6,7 @@ ALTER DATABASE DB_Airbnb SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
 GO
 DROP DATABASE DB_Airbnb;
 GO
-*/
+
 
 GO
 USE master
@@ -19,9 +19,12 @@ GO
 -- Tạo Bảng
 CREATE TABLE HOST (
 	HostID				Char(10),
-	HO_Name				Nvarchar(50),
-	HO_AboutMe			Text,
-	HO_Description		Text,
+	HO_Password			Varchar(255),
+	HO_Firstname		Nvarchar(50),
+	HO_Lastname			Nvarchar(50),
+	HO_Sex				Char CHECK (HO_Sex IN ('M', 'F', 'O')),
+	HO_AboutMe			Nvarchar(MAX),
+	HO_Description		Nvarchar(MAX),
 	HO_DateOfBirth		Date,
 	HO_Email			Varchar(50),
 	HO_DateCreateAcc	Date,
@@ -40,16 +43,16 @@ CREATE TABLE HOMESTAY (
 	HostID				Char(10),
 	HS_ShortName		Nvarchar(50),
 	HS_LongName			Nvarchar(255),
-	HS_Address			Text,
+	HS_Address			Nvarchar(MAX),
 	HS_BasePrice		Int,
 	HS_CurrentPrice		Int,
 	HS_NumOfDays		Int,
 	HS_AvgRating		Float,
 	HS_NumOfReview		Int,
-	HS_ListOfImage		Text,
-	HS_Room				Text,
-	HS_Descripton		Text,
-	HS_Amenity			Char(50),
+	HS_ListOfImage		Nvarchar(MAX),
+	HS_Room				Nvarchar(MAX),
+	HS_Description		Nvarchar(MAX),
+	HS_Amenity			Nvarchar(MAX),
 	HS_Status			Varchar(20) CHECK (HS_Status IN (
 							'Normal',      -- Homestay bình thường
 							'Banned'       -- Homestay bị cấm, không hiển thị
@@ -73,6 +76,7 @@ CREATE TABLE ACCOUNT (
 							'Normal',      -- Tài khoản dùng bình thường
 							'Banned'       -- Tài khoản bị khóa
 						)),
+	AC_Role              Varchar(20) CHECK (AC_Role IN ('user', 'admin')) DEFAULT 'user',
 	PRIMARY KEY (AccountID)
 );
 
@@ -103,7 +107,7 @@ CREATE TABLE REVIEW (
 	AccountID			Char(10),
 	HomestayID			Char(20),
 	RV_Rating			Int,
-	RV_ReviewText		Text,
+	RV_ReviewText		Nvarchar(MAX),
 	RV_TimeCreateRv		Datetime,
 	PRIMARY KEY (ReviewID)
 );
@@ -136,13 +140,12 @@ CREATE TABLE PAYMENT (
 
 CREATE TABLE AUCTION (
     AuctionID			Char(20),
-    HomestayID			Char(20),
+    BookingID			Char(30),
     A_StartPrice		Int,
     A_CurrentPrice		Int,
     A_StepPrice			Int,
     A_StartTime			Datetime,
     A_EndTime			Datetime,
-    -- A_CurrentAccountID	Char(10),
     A_WinnerAccountID	Char(10),
     A_Status			Varchar(20) CHECK (A_Status IN (
 							'Open',       -- Đang mở
@@ -153,12 +156,16 @@ CREATE TABLE AUCTION (
 );
 
 CREATE TABLE AUCTION_BID (
-    BidID           Char(20),
-    AuctionID       Char(20),
-    AccountID       Char(10),
-    BD_Time         Datetime,
-    BD_Amount       Int,
-    PRIMARY KEY (BidID)
+    BidID				Char(10),
+    AuctionID			Char(20),
+    AccountID			Char(10),
+    BD_Time				Datetime,
+    BD_Amount			Int,
+	BK_Adults			Int,
+	BK_Children			Int,
+	BK_Infants			Int,
+	BK_Pets				Int,
+    PRIMARY KEY (BidID, AuctionID)
 );
 
 -- Tạo khóa ngoại
@@ -196,11 +203,8 @@ ALTER TABLE PAYMENT
 	FOREIGN KEY (AccountID) REFERENCES ACCOUNT(AccountID);
 	
 ALTER TABLE AUCTION
-	ADD CONSTRAINT FK_AUCTION_HOMESTAY
-	FOREIGN KEY (HomestayID) REFERENCES HOMESTAY(HomestayID);
-/*ALTER TABLE AUCTION
-	ADD CONSTRAINT FK_AUCTION_CURRENT_ACCOUNT
-	FOREIGN KEY (A_CurrentAccountID) REFERENCES ACCOUNT(AccountID);*/
+	ADD CONSTRAINT FK_AUCTION_BOOKING
+	FOREIGN KEY (BookingID) REFERENCES BOOKING(BookingID);
 ALTER TABLE AUCTION
 	ADD CONSTRAINT FK_AUCTION_WINNER_ACCOUNT
 	FOREIGN KEY (A_WinnerAccountID) REFERENCES ACCOUNT(AccountID);
@@ -213,6 +217,7 @@ ALTER TABLE AUCTION_BID
 	FOREIGN KEY (AccountID) REFERENCES ACCOUNT(AccountID);
 /*
 SELECT * FROM HOMESTAY;
+SELECT * FROM HOST;
 SELECT * FROM ACCOUNT;
 SELECT * FROM BOOKING;
 SELECT * FROM PAYMENT;
@@ -220,5 +225,6 @@ SELECT * FROM PAYMENT;
 /*
 DELETE FROM BOOKING;
 DELETE FROM ACCOUNT;
+DELETE FROM HOST;
 DELETE FROM HOMESTAY;
 */

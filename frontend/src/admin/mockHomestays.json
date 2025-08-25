@@ -1,0 +1,5 @@
+[
+  { "id": 1, "name": "Homestay Đà Lạt", "host": "Nguyễn Văn A", "status": "Hoạt động" },
+  { "id": 2, "name": "Homestay Sapa", "host": "Trần Thị B", "status": "Bị ban" },
+  { "id": 3, "name": "Homestay Hội An", "host": "Lê Văn C", "status": "Hoạt động" }
+]

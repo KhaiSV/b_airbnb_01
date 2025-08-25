@@ -1,0 +1,88 @@
+/* Bố cục chung */
+.admin-dashboard, .admin-login, .user-management, .product-management, .order-management, .homestay-management {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 32px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+}
+
+/* Bảng quản lý homestay */
+.homestay-management table {
+}
+  }
+
+  /* Bảng quản lý người dùng */
+  .user-management table {
+    width: 100%;
+    /* Style cho trang dashboard admin */
+    .admin-dashboard {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 32px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+    }
+    .admin-dashboard h1 {
+      color: #ee5a24;
+      font-size: 2.2rem;
+      margin-bottom: 18px;
+    }
+    .admin-dashboard p {
+      font-size: 1.1rem;
+      color: #555;
+      margin-bottom: 24px;
+    }
+    .admin-dashboard .dashboard-widgets {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-top: 24px;
+    }
+    .admin-dashboard .widget {
+      flex: 1 1 200px;
+      background: #ffe5d0;
+      border-radius: 10px;
+      padding: 24px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+    .admin-dashboard .widget-title {
+      font-size: 1.1rem;
+      color: #d84315;
+      margin-bottom: 8px;
+    }
+    .admin-dashboard .widget-value {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #ee5a24;
+    }
+    background: #ffe5d0;
+  }
+  .user-management button {
+    margin: 0 4px;
+    padding: 7px 18px;
+    border-radius: 6px;
+    border: none;
+    background: #ee5a24;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .user-management button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+.user-management button:hover:not(:disabled) {
+  background: #d84315;
+}
+.admin-login button {
+  background: #ee5a24;
+  color: #fff;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+}}
