@@ -10,6 +10,12 @@ import Register from "./Register";
 import Profile from "./Profile";
 import ChangePassword from "./ChangePassword";
 import Detail from "./components/Detail"; // ✅ THÊM
+
+import AdminDashboard from "./admin/AdminDashboard";
+import UserManagement from "./admin/UserManagement";
+import HostManagement from "./admin/HostManagement";
+import HomestayManagement from "./admin/HomestayManagement";
+import AuctionManagement from "./admin/AuctionManagement";
 import { Routes, Route } from "react-router-dom";
 
 function App() {
@@ -22,7 +28,12 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/change-password" element={<ChangePassword />} />
-        <Route path="/details/:id" element={<Detail />} /> {/* ✅ THÊM ROUTE */}
+        <Route path="/details/:id" element={<Detail />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/users" element={<UserManagement />} />
+        <Route path="/admin/hosts" element={<HostManagement />} />
+        <Route path="/admin/homestays" element={<HomestayManagement />} />
+        <Route path="/admin/auctions" element={<AuctionManagement />} />
         <Route path="/" element={<Home />} />
         {/* (không bắt buộc) 404: <Route path="*" element={<NotFound />} /> */}
       </Routes>

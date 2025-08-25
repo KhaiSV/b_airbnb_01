@@ -515,6 +515,26 @@ function Header() {
                 <Link to="/change-password" className="header__dropdownItem" onClick={() => setUserDropdownOpen(false)}>
                   <span>Đổi mật khẩu</span>
                 </Link>
+                {user.role === 'admin' && (
+                  <>
+                    <div className="header__dropdownDivider" />
+                    <Link to="/admin/dashboard" className="header__dropdownItem" onClick={() => setUserDropdownOpen(false)}>
+                      <span>Admin Dashboard</span>
+                    </Link>
+                    <Link to="/admin/users" className="header__dropdownItem" onClick={() => setUserDropdownOpen(false)}>
+                      <span>Quản lý người dùng</span>
+                    </Link>
+                    <Link to="/admin/hosts" className="header__dropdownItem" onClick={() => setUserDropdownOpen(false)}>
+                      <span>Quản lý Host</span>
+                    </Link>
+                    <Link to="/admin/homestays" className="header__dropdownItem" onClick={() => setUserDropdownOpen(false)}>
+                      <span>Quản lý Homestay</span>
+                    </Link>
+                    <Link to="/admin/auctions" className="header__dropdownItem" onClick={() => setUserDropdownOpen(false)}>
+                      <span>Quản lý Đấu giá</span>
+                    </Link>
+                  </>
+                )}
                 <div className="header__dropdownItem" onClick={handleLogout}>
                   <span>Đăng xuất</span>
                 </div>
