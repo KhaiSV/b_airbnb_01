@@ -38,7 +38,34 @@ function Detail() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState(false);
+  const [checkIn, setCheckIn] = useState("");
+  const [checkOut, setCheckOut] = useState("");
+  const [guests, setGuests] = useState(1);
 
+  const calcNights = () => {
+    if (!checkIn || !checkOut) return 0;
+    const inDate = new Date(checkIn);
+    const outDate = new Date(checkOut);
+    const diff = (outDate - inDate) / (1000 * 60 * 60 * 24);
+    return diff > 0 ? diff : 0;
+  };
+
+  const nights = calcNights();
+  const total = nights * data?.HS_CurrentPrice;
+
+  const handleBooking = () => {
+    if (!checkIn || !checkOut) {
+      alert("Vui lòng chọn ngày nhận và trả phòng");
+      return;
+    }
+    if (nights <= 0) {
+      alert("Ngày trả phòng phải sau ngày nhận phòng!");
+      return;
+    }
+    alert(
+      `Đặt phòng thành công!\nNgày nhận: ${checkIn}\nNgày trả: ${checkOut}\nKhách: ${guests}\nSố đêm: ${nights}\nTổng: ${total.toLocaleString()}đ`
+    );
+  };
   useEffect(() => {
     if (!id) return;
     setLoading(true);
@@ -70,6 +97,7 @@ function Detail() {
     : [];
   const mainImage = images[0] || "";
   const subImages = images.slice(1, 5); // lấy 4 ảnh
+
 
   return (
     <div className="detail">
@@ -115,7 +143,7 @@ function Detail() {
           ))}
         </div>
       </div>
-      
+
 
       <div className="detail__container">
         {/* Left side */}
@@ -131,28 +159,28 @@ function Detail() {
             </p>
           </div>
 
-                  <div className="favorite-box">
-  <div className="favorite-left">
-    <span className="laurel">🍃</span>
-    <span className="favorite-text">Được khách yêu thích</span>
-    <span className="laurel">🍃</span>
-  </div>
+          <div className="favorite-box">
+            <div className="favorite-left">
+              <span className="laurel">🍃</span>
+              <span className="favorite-text">Được khách yêu thích</span>
+              <span className="laurel">🍃</span>
+            </div>
 
-  <div className="favorite-middle">
-    Khách đánh giá đây là một trong những ngôi nhà được yêu thích nhất trên Airbnb
-  </div>
+            <div className="favorite-middle">
+              Khách đánh giá đây là một trong những ngôi nhà được yêu thích nhất trên Airbnb
+            </div>
 
-  <div className="favorite-right">
-    <div className="rating">
-      <span className="rating-score">{data.HS_AvgRating.toFixed(2)}</span>
-      <span className="stars">★★★★★</span>
-    </div>
-    <div className="reviews">
-      <span className="review-num">{data.HS_NumOfReview}</span>
-      <span className="review-text">đánh giá</span>
-    </div>
-  </div>
-</div>
+            <div className="favorite-right">
+              <div className="rating">
+                <span className="rating-score">{data.HS_AvgRating.toFixed(2)}</span>
+                <span className="stars">★★★★★</span>
+              </div>
+              <div className="reviews">
+                <span className="review-num">{data.HS_NumOfReview}</span>
+                <span className="review-text">đánh giá</span>
+              </div>
+            </div>
+          </div>
 
           {/* Description */}
           <Description text={data.HS_Description} />
@@ -161,19 +189,54 @@ function Detail() {
         {/* Right side: Booking box */}
         <div className="detail__right">
           <div className="booking-box">
-            <h3>{data.HS_CurrentPrice.toLocaleString()}đ / đêm</h3>
+            <h3>
+              {data?.HS_CurrentPrice.toLocaleString()}đ{" "}
+              <span className="per-night">/ đêm</span>
+            </h3>
+
+            {/* Chọn ngày */}
             <div className="booking-box__dates">
-              <input type="text" placeholder="Nhận phòng" />
-              <input type="text" placeholder="Trả phòng" />
+              <div className="date-input">
+                <label>Nhận phòng</label> 
+                <input
+                  type="date"
+                  value={checkIn}
+                  onChange={(e) => setCheckIn(e.target.value)}
+                />
+              </div>
+              <div className="date-input">
+                <label>Trả phòng</label>
+                <input
+                  type="date"
+                  value={checkOut}
+                  onChange={(e) => setCheckOut(e.target.value)}
+                />
+              </div>
             </div>
+
+            {/* Chọn khách */}
             <div className="booking-box__guests">
-              <select>
-                <option>1 khách</option>
-                <option>2 khách</option>
-                <option>3 khách</option>
+              <label>Khách</label>
+              <select value={guests} onChange={(e) => setGuests(Number(e.target.value))}>
+                <option value={1}>1 khách</option>
+                <option value={2}>2 khách</option>
+                <option value={3}>3 khách</option>
+                <option value={4}>4 khách</option>
               </select>
             </div>
-            <button className="booking-box__button">Đặt ngay</button>
+
+            {/* Tính toán số đêm & tổng tiền */}
+            {nights > 0 && (
+              <p className="booking-summary">
+                {nights} đêm • {total.toLocaleString()}đ
+              </p>
+            )}
+
+            <button className="booking-box__button" onClick={handleBooking}>
+              Đặt phòng
+            </button>
+
+            <p className="note">Bạn vẫn chưa bị trừ tiền</p>
           </div>
         </div>
       </div>
