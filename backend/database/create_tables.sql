@@ -1,4 +1,4 @@
-﻿
+﻿/*
 -- Xóa database cũ
 USE master;
 GO
@@ -6,7 +6,7 @@ ALTER DATABASE DB_Airbnb SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
 GO
 DROP DATABASE DB_Airbnb;
 GO
-
+*/
 
 GO
 USE master
@@ -57,7 +57,10 @@ CREATE TABLE HOMESTAY (
 							'Normal',      -- Homestay bình thường
 							'Banned'       -- Homestay bị cấm, không hiển thị
 						)),
-	HS_AllowPets		Bit,
+	HS_Adults			Int,
+	HS_Children			Int,
+	HS_Infants			Int,
+	HS_Pets				Int,
 	PRIMARY KEY (HomestayID)
 );
 
@@ -220,7 +223,10 @@ SELECT * FROM HOMESTAY;
 SELECT * FROM HOST;
 SELECT * FROM ACCOUNT;
 SELECT * FROM BOOKING;
+SELECT * FROM REVIEW;
 SELECT * FROM PAYMENT;
+SELECT * FROM BOOKING WHERE BK_Status = 'CheckedOut' Order By AccountID;
+SELECT * FROM REVIEW Order By AccountID;
 */
 /*
 DELETE FROM BOOKING;
