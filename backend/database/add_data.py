@@ -285,8 +285,8 @@ def import_account_data(csv_file="account_data.csv"):
                     INSERT INTO ACCOUNT (
                         AccountID, AC_Username, AC_Password, AC_Firstname, 
                         AC_Lastname, AC_Sex, AC_DateOfBirth, AC_Email, AC_DateCreateAcc,
-                        AC_Status
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        AC_Status, AC_Role
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, 
                     row['AccountID'],
                     row['AC_Username'],
@@ -297,7 +297,8 @@ def import_account_data(csv_file="account_data.csv"):
                     date_of_birth,
                     row['AC_Email'],
                     date_create_acc,
-                    "Normal"
+                    "Normal",
+                    row['AC_Role'] if 'AC_Role' in row and pd.notna(row['AC_Role']) else 'user'
                 )
                 success_count += 1
             except Exception as e:

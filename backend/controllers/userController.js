@@ -110,7 +110,7 @@ class UserController {
             const Database = require('../config/database');
 
             // Tìm user trong database
-            const query = 'SELECT AccountID, AC_Username, AC_Firstname, AC_Lastname, AC_Email, AC_DateOfBirth FROM Account WHERE AC_Username = @param0';
+            const query = 'SELECT AccountID, AC_Username, AC_Firstname, AC_Lastname, AC_Email, AC_DateOfBirth, AC_Role FROM Account WHERE AC_Username = @param0';
             const result = await Database.query(query, [username]);
 
             if (result.recordset.length === 0) {

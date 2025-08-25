@@ -1,0 +1,50 @@
+/* Style cho trang quản lý homestay */
+.homestay-management {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 32px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+}
+.homestay-management table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 24px;
+  background: #fafafa;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.homestay-management th, .homestay-management td {
+  padding: 14px 12px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+}
+.homestay-management th {
+  background: #ff5a5f;
+  color: #fff;
+  font-weight: 600;
+}
+.homestay-management tr:last-child td {
+  border-bottom: none;
+}
+.homestay-management tr:hover {
+  background: #ffe5d0;
+}
+.homestay-management button {
+  margin: 0 4px;
+  padding: 7px 18px;
+  border-radius: 6px;
+  border: none;
+  background: #ff5a5f;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.homestay-management button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+.homestay-management button:hover:not(:disabled) {
+  background: #e04a4f;
+}

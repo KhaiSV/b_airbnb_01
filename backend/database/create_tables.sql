@@ -1,4 +1,4 @@
-﻿/*
+﻿
 -- Xóa database cũ
 USE master;
 GO
@@ -6,7 +6,7 @@ ALTER DATABASE DB_Airbnb SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
 GO
 DROP DATABASE DB_Airbnb;
 GO
-*/
+
 
 GO
 USE master
@@ -76,6 +76,7 @@ CREATE TABLE ACCOUNT (
 							'Normal',      -- Tài khoản dùng bình thường
 							'Banned'       -- Tài khoản bị khóa
 						)),
+	AC_Role              Varchar(20) CHECK (AC_Role IN ('user', 'admin')) DEFAULT 'user',
 	PRIMARY KEY (AccountID)
 );
 

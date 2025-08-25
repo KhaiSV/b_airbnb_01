@@ -82,7 +82,8 @@ class AuthService {
             AC_Lastname,
             AC_Sex,
             AC_DateOfBirth,
-            AC_Email
+            AC_Email,
+            AC_Role = 'user' // mặc định là user
         } = userData;
 
         try {
@@ -118,8 +119,8 @@ class AuthService {
 
             // Insert vào database
             const insertQuery = `
-                INSERT INTO Account (AccountID, AC_Username, AC_Password, AC_Firstname, AC_Lastname, AC_Sex, AC_DateOfBirth, AC_Email, AC_DateCreateAcc)
-                VALUES (@param0, @param1, @param2, @param3, @param4, @param5, @param6, @param7, GETDATE())
+                INSERT INTO Account (AccountID, AC_Username, AC_Password, AC_Firstname, AC_Lastname, AC_Sex, AC_DateOfBirth, AC_Email, AC_DateCreateAcc, AC_Role)
+                VALUES (@param0, @param1, @param2, @param3, @param4, @param5, @param6, @param7, GETDATE(), @param8)
             `;
             
             await Database.query(insertQuery, [
@@ -130,7 +131,8 @@ class AuthService {
                 AC_Lastname,
                 AC_Sex,
                 AC_DateOfBirth,
-                AC_Email
+                AC_Email,
+                AC_Role
             ]);
 
             // Tạo token
@@ -163,7 +165,7 @@ class AuthService {
     static async login(username, password) {
         try {
             // Tìm user trong database
-            const query = 'SELECT AccountID, AC_Username, AC_Password, AC_Firstname, AC_Lastname, AC_Email FROM Account WHERE AC_Username = @param0';
+            const query = 'SELECT AccountID, AC_Username, AC_Password, AC_Firstname, AC_Lastname, AC_Email, AC_Role FROM Account WHERE AC_Username = @param0';
             const result = await Database.query(query, [username]);
             
             if (result.recordset.length === 0) {

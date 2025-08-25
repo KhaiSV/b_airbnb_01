@@ -1,0 +1,7 @@
+[
+  { "id": 101, "user": "user1", "homestay": "Homestay Đà Lạt", "date": "2025-08-20", "total": 1200000, "status": "Đã thanh toán" },
+  { "id": 102, "user": "user2", "homestay": "Homestay Sapa", "date": "2025-08-22", "total": 900000, "status": "Chờ xác nhận" },
+  { "id": 103, "user": "user3", "homestay": "Homestay Hội An", "date": "2025-08-23", "total": 1500000, "status": "Đã hủy" },
+  { "id": 104, "user": "user1", "homestay": "Homestay Đà Lạt", "date": "2025-08-24", "total": 1200000, "status": "Đã thanh toán" },
+  { "id": 105, "user": "user2", "homestay": "Homestay Sapa", "date": "2025-08-25", "total": 900000, "status": "Chờ xác nhận" }
+]
